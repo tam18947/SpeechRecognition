@@ -1,7 +1,7 @@
 # SpeechRecognition
 
-https://tam18947.github.io/SpeechRecognition/normal.html
+[normal](https://tam18947.github.io/SpeechRecognition/normal.html)
 
-https://tam18947.github.io/SpeechRecognition/black.html
+[black](https://tam18947.github.io/SpeechRecognition/black.html)
 
-https://tam18947.github.io/SpeechRecognition/black_bottom.html
+[black bottom](https://tam18947.github.io/SpeechRecognition/black_bottom.html)
