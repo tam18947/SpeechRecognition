@@ -3,7 +3,7 @@ const SpeechRecognition =
 const recognition = new SpeechRecognition();
 
 recognition.onresult = (event) => {
-  document.querySelector("#text").innerHTML += '\t\r\n' + event.results[0][0].transcript;
+  document.querySelector("#text").innerHTML += '\t\r\n' + event.results[0][0].transcript + '。';
 
   var element = document.documentElement;
   var bottom = element.scrollHeight - element.clientHeight;
