@@ -10,7 +10,11 @@ recognition.onresult = (event) => {
 
   var element = document.documentElement;
   var bottom = element.scrollHeight - element.clientHeight;
-  window.scroll(0, bottom);
+  //window.scroll(0, bottom);
+  window.scrollTo({
+    top: bottom,
+    behavior: 'smooth',
+  });
 };
 
 recognition.onend = () => recognition.start();
