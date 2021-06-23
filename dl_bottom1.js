@@ -9,7 +9,7 @@ var sHeight = 0;
 var cHeight = 0;
 
 recognition.onresult = (event) => {
-  document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + '<br>';//'。';//'<br>';
+  document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + '<br><br>>';//'。';//'<br>';
   if (event.results[0].isFinal)
   {
     str += event.results[0][0].transcript + '。';
