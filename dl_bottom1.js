@@ -15,10 +15,12 @@ recognition.onresult = (event) => {
   }
 
   var element = document.documentElement;
+  var tmp = '<br>';
   while (sHeight >= element.scrollHeight && element.scrollHeight > element.clientHeight)
   {
-    document.querySelector("#text").innerHTML += '<br>';
-    //document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + '<br>';
+    //document.querySelector("#text").innerHTML += '<br>';
+    document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
+    tmp += '<br>';
   }
   sHeight = element.scrollHeight;
   var bottom = element.scrollHeight - element.clientHeight;
