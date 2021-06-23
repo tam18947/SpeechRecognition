@@ -15,9 +15,10 @@ recognition.onresult = (event) => {
   }
 
   var element = document.documentElement;
-  while (sHeight >= element.scrollHeight)
+  while (sHeight >= element.scrollHeight && element.scrollHeight > element.clientHeight)
   {
     document.querySelector("#text").innerHTML += '<br>';
+    //document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + '<br>';
   }
   sHeight = element.scrollHeight;
   var bottom = element.scrollHeight - element.clientHeight;
