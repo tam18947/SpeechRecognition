@@ -4,7 +4,7 @@ const recognition = new SpeechRecognition();
 
 recognition.interimResults = true;
 recognition.continuous = false;
-var str = "aaa ";
+var str = "> ";
 
 recognition.onresult = (event) => {
   document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + '。';//'<br>';
