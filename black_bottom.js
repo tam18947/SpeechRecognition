@@ -2,8 +2,8 @@ const SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
 const recognition = new SpeechRecognition();
 
-//recognition.interimResults = true;
-//recognition.continuous = false;
+recognition.interimResults = true;
+recognition.continuous = false;
 
 recognition.onresult = (event) => {
   document.querySelector("#text").innerHTML = event.results[0][0].transcript;
