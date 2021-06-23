@@ -5,7 +5,8 @@ const recognition = new SpeechRecognition();
 recognition.interimResults = true;
 recognition.continuous = false;
 var str = "> ";
-var height = 0;
+var sHeight = 0;
+var cHeight = 0;
 
 recognition.onresult = (event) => {
   document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + '<br>';//'。';//'<br>';
@@ -15,11 +16,16 @@ recognition.onresult = (event) => {
   }
 
   var element = document.documentElement;
-  if (height < element.scrollHeight && element.scrollHeight > element.clientHeight)
+  if (sHeight < element.scrollHeight)
   {
-    height = element.scrollHeight;
+    sHeight = element.scrollHeight;
+    cHeight = element.clientHeight;
   }
-  var bottom = height - element.clientHeight;
+  else
+  {
+    cHeight = element.clientHeight + element.scrollHeight - sHeight;
+  }
+  var bottom = element.scrollHeight - cHeight;
   window.scrollTo({
     top: bottom,
     behavior: 'smooth',
