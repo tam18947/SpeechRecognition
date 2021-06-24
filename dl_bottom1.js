@@ -25,6 +25,7 @@ recognition.onresult = (event) => {
       tmp += '<br>>';
       element = document.documentElement;
     }
+    tmp = '<br>>';
   }
   sHeight = element.scrollHeight;
   var bottom = element.scrollHeight - element.clientHeight;
