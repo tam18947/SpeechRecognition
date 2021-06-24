@@ -8,7 +8,7 @@ var str = "";
 var sHeight = 0;
 
 recognition.onresult = (event) => {
-  document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;//'。';//'<br>';
+  document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;
   if (event.results[0].isFinal)
   {
     str += event.results[0][0].transcript + '。';
@@ -17,17 +17,17 @@ recognition.onresult = (event) => {
   var element = document.documentElement;
   if (element.scrollHeight > element.clientHeight)
   {
-    if (sHeight > element.scrollHeight)
+    //if (sHeight > element.scrollHeight)
+    //{
+    var tmp = '<br>>';
+    while (sHeight > element.scrollHeight)
     {
-      var tmp = '<br>>';
-      while (sHeight > element.scrollHeight)
-      {
-        document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
-        tmp += '<br>>';
-        element = document.documentElement;
-      }
-      tmp = '<br>>';
+      document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
+      tmp += '<br>>';
+      element = document.documentElement;
     }
+    tmp = '<br>>';
+    //}
     sHeight = element.scrollHeight;
   }
   var bottom = element.scrollHeight - element.clientHeight;
