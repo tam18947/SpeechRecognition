@@ -19,14 +19,14 @@ recognition.onresult = (event) => {
   {
     //if (sHeight > element.scrollHeight)
     //{
-    var tmp = '<br>>';
+    var tmp = '<br>';
     while (sHeight > element.scrollHeight)
     {
       document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
-      tmp += '<br>>';
+      tmp += '<br>';
       element = document.documentElement;
     }
-    tmp = '<br>>';
+    //tmp = '<br>>';
     //}
     sHeight = element.scrollHeight;
   }
