@@ -12,6 +12,6 @@ html, body {
     margin: 5rem;
   }*/
   
-  #text::-webkit-scrollbar {
+  .text::-webkit-scrollbar {
     display:none;
   }
