@@ -12,6 +12,6 @@
   margin: 5rem;
 }*/
 
-.background::-webkit-scrollbar {
+.container::-webkit-scrollbar {
   display:none;
 }
