@@ -12,6 +12,6 @@
   margin: 5rem;
 }*/
 
-.container::-webkit-scrollbar {
+::-webkit-scrollbar {
   display:none;
 }
