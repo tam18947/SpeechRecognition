@@ -21,6 +21,7 @@ recognition.onresult = (event) => {
     //document.querySelector("#text").innerHTML += '<br>';
     document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
     tmp += '<br>';
+    element = document.documentElement;
   }
   sHeight = element.scrollHeight;
   var bottom = element.scrollHeight - element.clientHeight;
