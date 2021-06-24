@@ -16,6 +16,11 @@ html, body {
     margin: 5rem;
   }
   
+  .text::-webkit-scrollbar {
+    display:none;
+  }
+
+
   .invert {
     -webkit-filter: invert(1);
             filter: invert(1);
