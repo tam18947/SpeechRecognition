@@ -40,4 +40,9 @@ recognition.start();
 window.onresize = function () {
   var element = document.documentElement;
   sHeight = element.scrollHeight;
+  var bottom = element.scrollHeight - element.clientHeight;
+  window.scrollTo({
+    top: bottom,
+    behavior: 'smooth',
+  });
 };
