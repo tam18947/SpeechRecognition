@@ -1,8 +1,8 @@
 /*html, body {
   padding: 0;
   margin: 0;
-}
-  
+}*/
+
 #text {
   position: fixed;
   font-size: 6rem;
@@ -10,7 +10,7 @@
   font-weight: bold;
   z-index: 1;
   margin: 5rem;
-}*/
+}
 
 ::-webkit-scrollbar {
   display:none;
