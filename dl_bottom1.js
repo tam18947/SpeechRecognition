@@ -17,7 +17,7 @@ recognition.onresult = (event) => {
   var element = document.documentElement;
   if (element.scrollHeight > element.clientHeight)
   {
-    var tmp = '<br>';
+    var tmp = '<br>>';
     if (sHeight >= element.scrollHeight)
     //while (sHeight >= element.scrollHeight)
     {
