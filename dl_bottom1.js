@@ -18,11 +18,11 @@ recognition.onresult = (event) => {
   if (element.scrollHeight > element.clientHeight)
   {
     var tmp = '<br>>';
-    if (sHeight >= element.scrollHeight)
-    //while (sHeight >= element.scrollHeight)
+    //if (sHeight >= element.scrollHeight)
+    while (sHeight >= element.scrollHeight)
     {
       document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
-      //tmp += '<br>';
+      tmp += '<br>>';
       element = document.documentElement;
     }
   }
