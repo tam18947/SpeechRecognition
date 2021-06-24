@@ -17,8 +17,6 @@ recognition.onresult = (event) => {
   var element = document.documentElement;
   if (element.scrollHeight > element.clientHeight)
   {
-    //if (sHeight > element.scrollHeight)
-    //{
     var tmp = '<br>';
     while (sHeight > element.scrollHeight)
     {
@@ -26,8 +24,6 @@ recognition.onresult = (event) => {
       tmp += '<br>';
       element = document.documentElement;
     }
-    //tmp = '<br>>';
-    //}
     sHeight = element.scrollHeight;
   }
   var bottom = element.scrollHeight - element.clientHeight;
