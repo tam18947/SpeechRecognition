@@ -11,12 +11,10 @@ let date;
 recognition.onresult = (event) => {
   let str = txt + event.results[0][0].transcript;
   if (event.results[0].isFinal) {
-    txt = str + '。<br>';
-    document.querySelector("#text").innerHTML = txt;
+    str += '。<br>';
+    txt = str;
   }
-  else {
-    document.querySelector("#text").innerHTML = str;
-  }
+  document.querySelector("#text").innerHTML = str;
 
   let element = document.documentElement;
   if (element.scrollHeight > element.clientHeight) {
