@@ -9,11 +9,11 @@ let sHeight = 0;
 let date;
 
 recognition.onresult = (event) => {
-  document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;
   if (event.results[0].isFinal)
   {
     str += event.results[0][0].transcript + '。<br>';
   }
+  document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;
 
   let element = document.documentElement;
   if (element.scrollHeight > element.clientHeight)
