@@ -18,11 +18,11 @@ recognition.onresult = (event) => {
 
   let element = document.documentElement;
   if (element.scrollHeight > element.clientHeight) {
-    let tmp = '<br>.';
+    let tmp = '<br>';
     //while (sHeight > element.scrollHeight) {
     for (let i = 0; i < 5 && sHeight > element.scrollHeight; i++) {
       document.querySelector("#text").innerHTML = str + tmp;
-      tmp += '<br>.';
+      tmp += '<br>';
       element = document.documentElement;
     }
     sHeight = element.scrollHeight;
