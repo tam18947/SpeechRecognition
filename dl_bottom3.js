@@ -33,7 +33,7 @@ recognition.onresult = (event) => {
     behavior: 'smooth',
   });
   count++;
-  setTimeout(timeReset(count), 10000)
+  setTimeout(timeReset(count), 10000);
 };
 
 recognition.onend = () => recognition.start();
