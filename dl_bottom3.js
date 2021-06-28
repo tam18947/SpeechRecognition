@@ -6,12 +6,14 @@ recognition.interimResults = true;
 recognition.continuous = false;
 let str = "";
 let sHeight = 0;
+let count = 0;
 
 recognition.onresult = (event) => {
   document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;
   if (event.results[0].isFinal)
   {
     str += event.results[0][0].transcript + '。<br>';
+    setTimeout(timeReset(++count), 10000)
   }
 
   let element = document.documentElement;
@@ -41,3 +43,10 @@ window.onresize = function () {
   let element = document.documentElement;
   sHeight = element.scrollHeight;
 };
+
+function timeReset(cnt) {
+  if (count == cnt) {
+    str = "";
+    count = 0;
+  }
+}
