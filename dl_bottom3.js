@@ -21,12 +21,13 @@ recognition.onresult = (event) => {
     let tmp = '<br>';
     //while (sHeight > element.scrollHeight) {
     for (let i = 0; i < 3 && sHeight > element.scrollHeight; i++) {
-        document.querySelector("#text").innerHTML = str + tmp;
+      document.querySelector("#text").innerHTML = str + tmp;
       tmp += '<br>';
       element = document.documentElement;
     }
     sHeight = element.scrollHeight;
   }
+
   let bottom = element.scrollHeight - element.clientHeight;
   window.scrollTo({
     top: bottom,
