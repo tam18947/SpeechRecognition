@@ -51,4 +51,7 @@ function timeReset(cnt) {
     str = count;
     //count = 0;
   }
+  else {
+    str = ">" + str;
+  }
 };
