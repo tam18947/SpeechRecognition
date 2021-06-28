@@ -10,7 +10,7 @@ let sHeight = 0;
 recognition.onresult = (event) => {
   let str = txt + event.results[0][0].transcript;
   if (event.results[0].isFinal) {
-    str += '。<br>';
+    str += '。';
     txt = str;
   }
   document.querySelector("#text").innerHTML = str;
