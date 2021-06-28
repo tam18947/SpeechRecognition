@@ -10,10 +10,10 @@ let count = 0;
 
 recognition.onresult = (event) => {
   document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;
+  setTimeout(timeReset(++count), 10000)
   if (event.results[0].isFinal)
   {
     str += event.results[0][0].transcript + '。<br>';
-    setTimeout(timeReset(++count), 10000)
   }
 
   let element = document.documentElement;
