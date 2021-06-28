@@ -51,4 +51,4 @@ function timeReset(cnt) {
     str = count;
     count = 0;
   }
-}
+};
