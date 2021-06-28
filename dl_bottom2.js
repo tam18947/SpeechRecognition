@@ -4,15 +4,16 @@ const recognition = new SpeechRecognition();
 
 recognition.interimResults = true;
 recognition.continuous = false;
-let str = "";
+let txt = "";
 let sHeight = 0;
 
 recognition.onresult = (event) => {
-  document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;
-  if (event.results[0].isFinal)
-  {
-    str += event.results[0][0].transcript + '。';
+  let str = txt + event.results[0][0].transcript;
+  if (event.results[0].isFinal) {
+    str += '。<br>';
+    txt = str;
   }
+  document.querySelector("#text").innerHTML = str;
 
   let element = document.documentElement;
   if (element.scrollHeight > element.clientHeight)
@@ -20,7 +21,7 @@ recognition.onresult = (event) => {
     let tmp = '<br>';
     while (sHeight > element.scrollHeight)
     {
-      document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
+      document.querySelector("#text").innerHTML = str + tmp;
       tmp += '<br>';
       element = document.documentElement;
     }
