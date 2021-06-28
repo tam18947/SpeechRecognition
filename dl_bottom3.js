@@ -47,7 +47,7 @@ window.onresize = function () {
 function timeReset(cnt) {
   if (count == cnt) {
     document.querySelector("#text").innerHTML = "";
-    str = "";
+    str = count;
     count = 0;
   }
 }
