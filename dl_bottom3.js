@@ -15,18 +15,19 @@ recognition.onresult = (event) => {
   }
   else {
     document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;
+
+    let element = document.documentElement;
+    if (element.scrollHeight > element.clientHeight) {
+      let tmp = '<br>';
+      while (sHeight > element.scrollHeight) {
+        document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
+        tmp += '<br>';
+        element = document.documentElement;
+      }
+      sHeight = element.scrollHeight;
+    }
   }
 
-  let element = document.documentElement;
-  if (element.scrollHeight > element.clientHeight) {
-    let tmp = '<br>';
-    while (sHeight > element.scrollHeight) {
-      document.querySelector("#text").innerHTML = str + event.results[0][0].transcript + tmp;
-      tmp += '<br>';
-      element = document.documentElement;
-    }
-    sHeight = element.scrollHeight;
-  }
   let bottom = element.scrollHeight - element.clientHeight;
   window.scrollTo({
     top: bottom,
