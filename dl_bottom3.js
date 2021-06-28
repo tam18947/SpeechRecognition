@@ -6,7 +6,7 @@ recognition.interimResults = true;
 recognition.continuous = false;
 let str = "";
 let sHeight = 0;
-let count = 0;
+let date;
 
 recognition.onresult = (event) => {
   document.querySelector("#text").innerHTML = str + event.results[0][0].transcript;
@@ -32,7 +32,9 @@ recognition.onresult = (event) => {
     top: bottom,
     behavior: 'smooth',
   });
-  setTimeout(timeReset, 10000, ++count);
+
+  date = new Date();
+  setTimeout(timeReset, 10000, date);
 };
 
 recognition.onend = () => recognition.start();
@@ -44,10 +46,9 @@ window.onresize = function () {
   sHeight = element.scrollHeight;
 };
 
-function timeReset(cnt) {
-  if (count == cnt) {
+function timeReset(da) {
+  if (date == da) {
     document.querySelector("#text").innerHTML = "";
     str = "";
-    count = 0;
   }
 };
