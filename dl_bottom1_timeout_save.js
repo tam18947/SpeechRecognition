@@ -7,10 +7,14 @@ recognition.continuous = false;
 let txt = "";
 let sHeight = 0;
 let date;
+let startDate;
 
 recognition.onresult = (event) => {
   let str = txt + event.results[0][0].transcript;
   if (event.results[0].isFinal) {
+    if (txt == "") {
+      startDate = new Date();
+    }
     str += '。<br>';
     txt = str;
   }
@@ -50,7 +54,7 @@ window.onresize = function () {
 
 function timeReset(da) {
   if (date == da) {
-    download(new Blob([txt.replace(/<br>/g,'\n')]), date + '.txt');
+    download(new Blob([txt.replace(/<br>/g,'\n')]), startDate + '.txt');
     txt = "";
     document.querySelector("#text").innerHTML = txt;
   }
