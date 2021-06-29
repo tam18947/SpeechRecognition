@@ -14,5 +14,5 @@
 
 [dl bottom2](https://tam18947.github.io/SpeechRecognition/dl_bottom2.html)
 
-[dl bottom reset](https://tam18947.github.io/SpeechRecognition/dl_bottom_reset.html)
+[dl bottom2 reset](https://tam18947.github.io/SpeechRecognition/dl_bottom2_reset.html)
 
