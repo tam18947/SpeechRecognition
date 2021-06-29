@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function(){
 
 function download(blob, filename) {
   const objectURL = window.URL.createObjectURL(blob),
-      a = document.createElement('a'),
-      e = document.createEvent('MouseEvent');
+    a = document.createElement('a'),
+    e = document.createEvent('MouseEvent');
 
   //a要素のdownload属性にファイル名を設定
   a.download = filename;
