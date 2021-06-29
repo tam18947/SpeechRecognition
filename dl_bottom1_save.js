@@ -45,7 +45,7 @@ window.onresize = function () {
 
 const button = document.getElementById("#btn");
 
-button.addEventListener('click', saveText);
+button.onclick = saveText;
 
 function saveText() {
   if (button.value === 'マシンを起動') {
