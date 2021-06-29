@@ -12,7 +12,4 @@
 
 [dl bottom1](https://tam18947.github.io/SpeechRecognition/dl_bottom1.html)
 
-[dl bottom2](https://tam18947.github.io/SpeechRecognition/dl_bottom2.html)
-
-[dl bottom2 timeout](https://tam18947.github.io/SpeechRecognition/dl_bottom2_timeout.html)
-
+[dl bottom1 timeout](https://tam18947.github.io/SpeechRecognition/dl_bottom1_timeout.html)
