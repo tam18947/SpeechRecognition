@@ -53,8 +53,7 @@ function saveText() {
   } else {
     button.value = 'マシンを起動';
   }*/
-  const a = document.createElement("#text");
-  a.href = 'data:text/plain,' + encodeURIComponent(txt);
-  a.download = 'test.txt';
+  button.href = 'data:text/plain,' + encodeURIComponent(txt);
+  button.download = 'test.txt';
 }
 
