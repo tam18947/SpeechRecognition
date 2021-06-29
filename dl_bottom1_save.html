@@ -19,6 +19,17 @@
   <div id="text" style="color: white;"></div>
   <footer style="bottom: 0; position:fixed;">
     <input type="button" value="download" id="btn">
+    <script>
+      function buttonClick() {
+        if (button.value === 'マシンを起動') {
+          button.value = 'マシンを停止';
+        } else {
+          button.value = 'マシンを起動';
+        }
+      }
+      let button = document.getElementById("#btn");
+      button.addEventListener('click', buttonClick);
+    </script>
     <!--<button id="btn" type="button">download</button>-->
   </footer>
 </body>
