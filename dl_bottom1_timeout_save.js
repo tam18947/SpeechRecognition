@@ -49,7 +49,7 @@ window.onresize = function () {
 
 function timeReset(da) {
   if (date == da) {
-    download(new Blob([txt]), data + '.txt');
+    download(new Blob([txt]), date + '.txt');
     txt = "";
     document.querySelector("#text").innerHTML = txt;
   }
