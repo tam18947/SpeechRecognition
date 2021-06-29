@@ -46,11 +46,6 @@ window.onresize = function () {
 
 
 document.addEventListener("DOMContentLoaded", function(){
-/*  const button = document.getElementById("btn");
-  button.addEventListener('click', function(){
-    download(txt);
-  });*/
-
   function buttonClick() {
     if (button.value === 'マシンを起動') {
       button.value = 'マシンを停止';
@@ -67,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function(){
   function saveText() {
     //button.href = 'data:text/plain,' + encodeURIComponent(txt);
     //button.download = 'test.txt';
+    download(new Blob([txt]), 'text.txt');
   }
 
 }, false);
