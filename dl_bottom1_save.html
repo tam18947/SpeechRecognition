@@ -21,10 +21,11 @@
     <input type="button" value="download" id="btn">
     <script>
       function buttonClick() {
-        if (button.value === 'マシンを起動') {
-          button.value = 'マシンを停止';
+        let button1 = document.getElementById("#btn");
+        if (button1.value === 'マシンを起動') {
+          button1.value = 'マシンを停止';
         } else {
-          button.value = 'マシンを起動';
+          button1.value = 'マシンを起動';
         }
       }
       let button = document.getElementById("#btn");
