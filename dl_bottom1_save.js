@@ -43,8 +43,6 @@ window.onresize = function () {
   sHeight = element.scrollHeight;
 };
 
-
-
 document.addEventListener("DOMContentLoaded", function(){
   function buttonClick() {
     if (button.value === 'マシンを起動') {
@@ -66,21 +64,6 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
 }, false);
-
-
-/*const button = document.getElementById("btn");
-
-button.addEventListener('click', saveText);
-
-function saveText() {
-  if (button.value === 'マシンを起動') {
-    button.value = 'マシンを停止';
-  } else {
-    button.value = 'マシンを起動';
-  }
-  //button.href = 'data:text/plain,' + encodeURIComponent(txt);
-  //button.download = 'test.txt';
-}*/
 
 function download(blob, filename) {
   const objectURL = window.URL.createObjectURL(blob),
