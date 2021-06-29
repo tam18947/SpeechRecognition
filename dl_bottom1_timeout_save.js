@@ -34,6 +34,7 @@ recognition.onresult = (event) => {
     behavior: 'smooth',
   });
 
+  // 30秒で消去
   date = new Date();
   setTimeout(timeReset, 30000, date);
 };
