@@ -56,4 +56,3 @@ function saveText() {
   //button.href = 'data:text/plain,' + encodeURIComponent(txt);
   //button.download = 'test.txt';
 }
-
