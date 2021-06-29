@@ -43,7 +43,7 @@ window.onresize = function () {
   sHeight = element.scrollHeight;
 };
 
-const button = document.querySelector("#text");
+let button = document.querySelector("btn");
 
 button.addEventListener('click', saveText);
 
