@@ -43,9 +43,9 @@ window.onresize = function () {
   sHeight = element.scrollHeight;
 };
 
-const button = document.getElementById("#btn");
+/*const button = document.getElementById("#btn");
 
-button.onclick = saveText;
+button.addEventListener('click', saveText);
 
 function saveText() {
   if (button.value === 'マシンを起動') {
@@ -69,4 +69,4 @@ function download(blob, filename) {
   //clickイベントを着火
   e.initEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
   a.dispatchEvent(e);
-}
+}*/
