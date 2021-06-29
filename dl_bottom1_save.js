@@ -44,25 +44,12 @@ window.onresize = function () {
 };
 
 document.addEventListener("DOMContentLoaded", function(){
-  function buttonClick() {
-    if (button.value === 'マシンを起動') {
-      button.value = 'マシンを停止';
-    } else {
-      button.value = 'マシンを起動';
-    }
-  }
   let button = document.getElementById("btn");
-  button.addEventListener('click', buttonClick);
-
-  let button1 = document.getElementById("btn");
-  button1.addEventListener('click', saveText);
+  button.addEventListener('click', saveText);
 
   function saveText() {
-    //button.href = 'data:text/plain,' + encodeURIComponent(txt);
-    //button.download = 'test.txt';
     download(new Blob([txt]), 'text.txt');
   }
-
 }, false);
 
 function download(blob, filename) {
