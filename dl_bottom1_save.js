@@ -48,12 +48,12 @@ let button = document.querySelector("btn");
 button.addEventListener('click', saveText);
 
 function saveText() {
-/*  if (button.value === 'マシンを起動') {
+  if (button.value === 'マシンを起動') {
     button.value = 'マシンを停止';
   } else {
     button.value = 'マシンを起動';
-  }*/
-  button.href = 'data:text/plain,' + encodeURIComponent(txt);
-  button.download = 'test.txt';
+  }
+  //button.href = 'data:text/plain,' + encodeURIComponent(txt);
+  //button.download = 'test.txt';
 }
 
