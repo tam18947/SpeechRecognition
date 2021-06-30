@@ -40,7 +40,7 @@ recognition.onresult = (event) => {
 
   // 30秒で消去
   date = new Date();
-  setTimeout(timeReset, 30000, date);
+  setTimeout(timeout, 30000, date);
 };
 
 recognition.onend = () => recognition.start();
@@ -52,13 +52,13 @@ window.onresize = function () {
   sHeight = element.scrollHeight;
 };
 
-function timeReset(da) {
-  if (date == da) {
+function timeout(d) {
+  if (date == d) {
     download(new Blob([txt.replace(/<br>/g,'\n')]), startDate + '.txt');
     txt = "";
     document.querySelector("#text").innerHTML = txt;
   }
-};
+}
 
 function download(blob, filename) {
   const objectURL = window.URL.createObjectURL(blob),
