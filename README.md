@@ -17,3 +17,5 @@
 [append bottom onresize save](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize_save.html)
 
 [append bottom onresize timeout save](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize_timeout_save.html)
+
+[append bottom onresize timeout save newline](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize_timeout_save_newline.html)
