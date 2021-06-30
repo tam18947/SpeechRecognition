@@ -2,18 +2,18 @@
 
 [normal](https://tam18947.github.io/SpeechRecognition/normal.html)
 
-[black](https://tam18947.github.io/SpeechRecognition/black.html)
+[replace](https://tam18947.github.io/SpeechRecognition/replace.html)
 
-[black bottom](https://tam18947.github.io/SpeechRecognition/black_bottom.html)
+[replace bottom](https://tam18947.github.io/SpeechRecognition/replace_bottom.html)
 
-[dl](https://tam18947.github.io/SpeechRecognition/dl.html)
+[append](https://tam18947.github.io/SpeechRecognition/append.html)
 
-[dl bottom](https://tam18947.github.io/SpeechRecognition/dl_bottom.html)
+[append bottom](https://tam18947.github.io/SpeechRecognition/append_bottom.html)
 
-[dl bottom1](https://tam18947.github.io/SpeechRecognition/dl_bottom1.html)
+[append bottom onresize](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize.html)
 
-[dl bottom1 timeout](https://tam18947.github.io/SpeechRecognition/dl_bottom1_timeout.html)
+[append bottom onresize timeout](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize_timeout.html)
 
-[dl bottom1 save](https://tam18947.github.io/SpeechRecognition/dl_bottom1_save.html)
+[append bottom onresize save](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize_save.html)
 
-[dl bottom1 timeout save](https://tam18947.github.io/SpeechRecognition/dl_bottom1_timeout_save.html)
+[append bottom onresize timeout save](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize_timeout_save.html)
