@@ -54,7 +54,7 @@ window.onresize = function () {
 
 function timeout(d) {
   if (date == d) {
-    download(new Blob([txt.replace(/<br>/g,'\n')]), startDate + '.txt');
+    download(new Blob([txt.replace(/。/g,'。\n')]), startDate + '.txt');
     txt = "";
     document.querySelector("#text").innerHTML = txt;
   }
