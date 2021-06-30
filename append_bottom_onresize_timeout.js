@@ -35,7 +35,7 @@ recognition.onresult = (event) => {
   });
 
   date = new Date();
-  setTimeout(timeReset, 30000, date);
+  setTimeout(timeout, 30000, date);
 };
 
 recognition.onend = () => recognition.start();
@@ -47,9 +47,9 @@ window.onresize = function () {
   sHeight = element.scrollHeight;
 };
 
-function timeReset(da) {
-  if (date == da) {
+function timeout(d) {
+  if (date == d) {
     txt = "";
     document.querySelector("#text").innerHTML = txt;
   }
-};
+}
