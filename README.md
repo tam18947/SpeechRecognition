@@ -10,6 +10,8 @@
 
 [append bottom](https://tam18947.github.io/SpeechRecognition/append_bottom.html)
 
+[append bottom br](https://tam18947.github.io/SpeechRecognition/append_bottom_br.html)
+
 [append bottom onresize](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize.html)
 
 [append bottom onresize br](https://tam18947.github.io/SpeechRecognition/append_bottom_onresize_br.html)
