@@ -4,6 +4,7 @@ const recognition = new SpeechRecognition();
 
 recognition.interimResults = true;
 recognition.continuous = false;
+let txt = "";
 
 recognition.onresult = (event) => {
   let str = txt + event.results[0][0].transcript;
