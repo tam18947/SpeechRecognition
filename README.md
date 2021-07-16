@@ -12,6 +12,8 @@
 
 [append bottom br](https://tam18947.github.io/SpeechRecognition/append_bottom_br.html)
 
+[append bottom interim br](https://tam18947.github.io/SpeechRecognition/append_bottom_interim_br.html)
+
 [append bottom interim onresize](https://tam18947.github.io/SpeechRecognition/append_bottom_interim_onresize.html)
 
 [append bottom interim onresize br](https://tam18947.github.io/SpeechRecognition/append_bottom_interim_onresize_br.html)
