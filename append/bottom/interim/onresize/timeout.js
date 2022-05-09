@@ -1,3 +1,4 @@
+// /append/bottom/interim/onresize/timeout.js
 const SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
 const recognition = new SpeechRecognition();
@@ -6,11 +7,12 @@ recognition.interimResults = true;
 recognition.continuous = false;
 let txt = "";
 let sHeight = 0;
+let date;
 
 recognition.onresult = (event) => {
   let str = txt + event.results[0][0].transcript;
   if (event.results[0].isFinal) {
-    str += '。<br>';
+    str += '。';
     txt = str;
   }
   document.querySelector("#text").innerHTML = str;
@@ -18,8 +20,8 @@ recognition.onresult = (event) => {
   let element = document.documentElement;
   if (element.scrollHeight > element.clientHeight) {
     let tmp = '<br>';
-    //while (sHeight > element.scrollHeight) {
-    for (let i = 0; i < 10 && sHeight > element.scrollHeight; i++) {
+    while (sHeight > element.scrollHeight) {
+    //for (let i = 0; i < 5 && sHeight > element.scrollHeight; i++) {
       document.querySelector("#text").innerHTML = str + tmp;
       tmp += '<br>';
       element = document.documentElement;
@@ -32,6 +34,9 @@ recognition.onresult = (event) => {
     top: bottom,
     behavior: 'smooth',
   });
+
+  date = new Date();
+  setTimeout(timeout, 30000, date);
 };
 
 recognition.onend = () => recognition.start();
@@ -42,3 +47,10 @@ window.onresize = function () {
   let element = document.documentElement;
   sHeight = element.scrollHeight;
 };
+
+function timeout(d) {
+  if (date == d) {
+    txt = "";
+    document.querySelector("#text").innerHTML = txt;
+  }
+}

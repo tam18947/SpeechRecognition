@@ -1,3 +1,4 @@
+// /append/bottom/interim/onresize.js
 const SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
 const recognition = new SpeechRecognition();
@@ -6,7 +7,6 @@ recognition.interimResults = true;
 recognition.continuous = false;
 let txt = "";
 let sHeight = 0;
-let date;
 
 recognition.onresult = (event) => {
   let str = txt + event.results[0][0].transcript;
@@ -33,9 +33,6 @@ recognition.onresult = (event) => {
     top: bottom,
     behavior: 'smooth',
   });
-
-  date = new Date();
-  setTimeout(timeout, 30000, date);
 };
 
 recognition.onend = () => recognition.start();
@@ -46,10 +43,3 @@ window.onresize = function () {
   let element = document.documentElement;
   sHeight = element.scrollHeight;
 };
-
-function timeout(d) {
-  if (date == d) {
-    txt = "";
-    document.querySelector("#text").innerHTML = txt;
-  }
-}

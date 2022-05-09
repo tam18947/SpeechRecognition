@@ -1,3 +1,4 @@
+// /replace/bottom.js
 const SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
 const recognition = new SpeechRecognition();
