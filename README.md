@@ -28,6 +28,6 @@
 
 [append bottom interim onresize timeout save br](https://tam18947.github.io/SpeechRecognition/append/bottom/interim/onresize/timeout/save/br.html)
 
-[append bottom interim onresize timeout save br](https://tam18947.github.io/SpeechRecognition/append/bottom/interim/onresize/timeout/save/brEN.html)
+[append bottom interim onresize timeout save brEN](https://tam18947.github.io/SpeechRecognition/append/bottom/interim/onresize/timeout/save/brEN.html)
 
-[append bottom interim onresize timeout save br](https://tam18947.github.io/SpeechRecognition/append/bottom/interim/onresize/timeout/save/brFR.html)
+[append bottom interim onresize timeout save brFR](https://tam18947.github.io/SpeechRecognition/append/bottom/interim/onresize/timeout/save/brFR.html)
