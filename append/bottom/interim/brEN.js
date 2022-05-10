@@ -30,14 +30,15 @@ recognition.onresult = (event) => {
       }
     }
     request.send(null);
-
-    let element = document.documentElement;
-    let bottom = element.scrollHeight - element.clientHeight;
-    window.scrollTo({
-      top: bottom,
-      behavior: 'smooth',
-    });
   }
+  document.querySelector("#text").innerHTML = transTxt + str;
+
+  let element = document.documentElement;
+  let bottom = element.scrollHeight - element.clientHeight;
+  window.scrollTo({
+    top: bottom,
+    behavior: 'smooth',
+  });
 };
 
 recognition.onend = () => recognition.start();
