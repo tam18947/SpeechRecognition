@@ -41,7 +41,7 @@ recognition.onresult = (event) => {
 
   // 60秒で消去
   date = new Date();
-  setTimeout(timeout, 10000, date);
+  setTimeout(timeout, 60000, date);
 };
 
 recognition.onend = () => recognition.start();
