@@ -1,6 +1,9 @@
-const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition
+const SpeechRecognition =
+  window.webkitSpeechRecognition || window.SpeechRecognition
 const recognition = new SpeechRecognition()
 
+// 音声認識用設定
+recognition.lang = 'ja';
 recognition.interimResults = true
 recognition.continuous = false
 

@@ -3,6 +3,8 @@ const SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
 const recognition = new SpeechRecognition();
 
+// 音声認識用設定
+recognition.lang = 'ja';
 recognition.interimResults = true;
 recognition.continuous = false;
 let txt = "";
@@ -18,7 +20,6 @@ var query = '';
 recognition.onresult = (event) => {
   let str = event.results[0][0].transcript;
   if (event.results[0].isFinal) {
-    str += '。';
     query = TRANS_URL + '?text=' + str + '&source=' + trans_sourcelang + '&target=' + trans_destlang;
     request.open('GET', query, true);
     request.onreadystatechange = function(){

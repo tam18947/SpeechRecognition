@@ -3,6 +3,8 @@ const SpeechRecognition =
   window.webkitSpeechRecognition || window.SpeechRecognition;
 const recognition = new SpeechRecognition();
 
+// 音声認識用設定
+recognition.lang = 'ja';
 recognition.interimResults = true;
 recognition.continuous = false;
 let txt = "";
@@ -11,7 +13,6 @@ let sHeight = 0;
 recognition.onresult = (event) => {
   let str = txt + event.results[0][0].transcript;
   if (event.results[0].isFinal) {
-    str += '。';
     txt = str;
   }
   document.querySelector("#text").innerHTML = str;
