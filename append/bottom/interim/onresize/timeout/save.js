@@ -62,15 +62,12 @@ function timeout(d) {
 }
 
 function download(blob, filename) {
-  const objectURL = window.URL.createObjectURL(blob),
-    a = document.createElement('a'),
-    e = document.createEvent('MouseEvent');
-
-  //a要素のdownload属性にファイル名を設定
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  document.body.appendChild(a);
   a.download = filename;
-  a.href = objectURL;
-
-  //clickイベントを着火
-  e.initEvent("click", true, true, window, 1, 0, 0, 0, 0, false, false, false, false, 0, null);
-  a.dispatchEvent(e);
+  a.href = url;
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
