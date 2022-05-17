@@ -121,8 +121,8 @@
       function onResize(element, txt) {
         if (element.scrollHeight > element.clientHeight) {
           let tmp = '<br>';
-          while (sHeight > element.scrollHeight) {
-          //for (let i = 0; i < 5 && sHeight > element.scrollHeight; i++) {
+          //while (sHeight > element.scrollHeight) {
+          for (let i = 0; i < 5 && sHeight > element.scrollHeight; i++) {
             document.querySelector("#text").innerHTML = txt + tmp;
             tmp += '<br>';
             element = document.documentElement;
