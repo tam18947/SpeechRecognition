@@ -22,10 +22,10 @@
 </head>
 
 <body style="background: black;">
-  <header class="item">
-    <div style="background: whitesmoke; padding: 10px; width: 100%; position: fixed;">
-      <input id="size1" type="range" value="200" min="25" max="500" step="5" oninput="document.getElementById('text').style.fontSize = this.value + '%'; document.getElementById('text_size_view1').innerHTML=this.value;" />
-      <span id="text_size_view1">200</span>% 
+  <header>
+    <div class="item" style="background: whitesmoke; padding: 10px; width: 100%; position: fixed;">
+      <input id="size1" type="range" value="400" min="25" max="500" step="5" oninput="document.getElementById('text').style.fontSize = this.value + '%'; document.getElementById('text_size_view1').innerHTML=this.value;" />
+      <span id="text_size_view1">400</span>% 
       <select id="trans" onchange="updateOptionValues(only_url=false);">
         <option value="none" selected>なし</option>
         <!--<option value="ja">日本語</option>-->
@@ -48,10 +48,11 @@
       </select>
       <button id="buttonClear" onclick="textClear()">Clear</button>
       <button id="button" onclick="toggleStartStop()">Start</button>
+      <button id="buttonDownload" onclick="textDownload()">Download</button>
     </div>
-    </header>
+  </header>
   <main>
-    <div id="text" style="color: white; font-size:200%; padding: 1em;"></div>
+    <div id="text" style="color: white; font-size:400%; padding: 1em;"></div>
     <script type="text/javascript">
       var recognizing;
       // 音声認識本体
@@ -147,9 +148,7 @@
 
       function timeout(d) {
         if (recognizing && date == d) {
-          download(new Blob([txt.replace(/<br>/g,'\n')]), startDate + '.txt');
-          txt = "";
-          document.querySelector("#text").innerHTML = txt;
+          textDownload();
         }
       }
 
@@ -162,6 +161,12 @@
         a.click();
         a.remove();
         URL.revokeObjectURL(url);
+      }
+
+      function textDownload() {
+        download(new Blob([txt.replace(/<br>/g,'\n')]), startDate + '.txt');
+        txt = "";
+        document.querySelector("#text").innerHTML = txt;
       }
 
       function onend() {
