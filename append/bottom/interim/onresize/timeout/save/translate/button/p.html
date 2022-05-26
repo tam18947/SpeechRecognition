@@ -52,7 +52,7 @@
     </div>
   </header>
   <main>
-    <div id="text" style="color: white; font-size:400%; padding: 1em; line-height: 1;"></div>
+    <div id="text" style="color: white; font-size:400%; padding: 1em; padding-bottom: 0.5em; line-height: 1;"></div>
     <script type="text/javascript">
       var recognizing;
       // 音声認識本体
@@ -83,15 +83,15 @@
             startDate = new Date();
           }
           if (document.getElementById('trans').value != 'none' && document.getElementById('trans').value != recognition.lang) {
-            query = TRANS_URL + '?text=' + str + '&source=' + trans_sourcelang + '&target=' + document.getElementById('trans').value;
+            query = TRANS_URL + '?text=' + event.results[0][0].transcript + '&source=' + trans_sourcelang + '&target=' + document.getElementById('trans').value;
             request.open('GET', query, true);
             request.onreadystatechange = function(){
               if (request.readyState === 4 && request.status === 200){
-                txt += request.responseText;
+                txt += '<p style="margin-bottom:0.5em">' + request.responseText + '</p>';
                 str = '';
                 document.querySelector("#text").innerHTML = txt;
                 let element = document.documentElement;
-                onResize(element, txt + str);
+                onResize(element, txt);
                 bottom(element);
               }
             }
