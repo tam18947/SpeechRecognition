@@ -26,7 +26,7 @@
     <div class="item bg-light" style="padding: 10px; width: 100%; position: fixed;">
       <input id="size1" type="range" class="form-range" value="400" min="25" max="500" step="5" oninput="document.getElementById('text').style.fontSize = this.value + '%'; document.getElementById('text_size_view1').innerHTML=this.value;" />
       <span id="text_size_view1">400</span>%
-      <select id="trans" class="form-select" aria-label="Default select example" onchange="updateOptionValues(only_url=false);">
+      <select id="trans" class="form-select" aria-label="Default select example">
         <option value="none" selected>なし</option>
         <!--<option value="ja">日本語</option>-->
         <option value="en">英語</option>
@@ -46,8 +46,8 @@
         <option value="ar">アラビア語</option>
         <option value="so">ソマリ語</option>
       </select>
-      <button type="button" class="btn btn-primary" id="buttonClear" onclick="textClear()">Clear</button>
       <button type="button" class="btn btn-primary" id="button" onclick="toggleStartStop()">Start</button>
+      <button type="button" class="btn btn-primary" id="buttonClear" onclick="textClear()">Clear</button>
       <button type="button" class="btn btn-primary" id="buttonDownload" disabled onclick="textDownload()">Download</button>
     </div>
   </header>
