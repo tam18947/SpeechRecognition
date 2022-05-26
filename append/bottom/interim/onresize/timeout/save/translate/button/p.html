@@ -164,8 +164,10 @@
       }
 
       function textDownload() {
-        download(new Blob([txt.replace(/<p style="margin-bottom:0.5em">/g, '').replace(/<\/p>/g,'\n')]), startDate + '.txt');
-        textClear();
+        if (txt != '') {
+          download(new Blob([txt.replace(/<p style="margin-bottom:0.5em">/g, '').replace(/<\/p>/g,'\n')]), startDate + '.txt');
+          textClear();
+        }
       }
 
       function onend() {
