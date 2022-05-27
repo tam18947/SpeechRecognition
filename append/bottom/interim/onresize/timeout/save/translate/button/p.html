@@ -82,30 +82,29 @@
           if (document.getElementById('trans').value != 'none' && document.getElementById('trans').value != recognition.lang) {
             query = TRANS_URL + '?text=' + event.results[0][0].transcript + '&source=' + trans_sourcelang + '&target=' + document.getElementById('trans').value;
             request.open('GET', query, true);
-            request.onreadystatechange = function(){
-              if (request.readyState === 4 && request.status === 200){
+            request.onreadystatechange = function() {
+              if (request.readyState === 4 && request.status === 200) {
                 txt += '<p style="margin-bottom:0.5em">' + request.responseText + '</p>';
-                str = '';
-                document.querySelector("#text").innerHTML = txt;
-                let element = document.documentElement;
-                onResize(element, txt);
-                bottom(element);
+                doWork(txt);
               }
             }
             request.send(null);
           } else {
             txt += str;
-            str = '';
-            document.querySelector("#text").innerHTML = txt;
-            let element = document.documentElement;
-            onResize(element, txt);
-            bottom(element);
+            doWork(txt);
           }
+        } else if (document.getElementById('trans').value != 'none' && document.getElementById('trans').value != recognition.lang) {
+          query = TRANS_URL + '?text=' + event.results[0][0].transcript + '&source=' + trans_sourcelang + '&target=' + document.getElementById('trans').value;
+          request.open('GET', query, true);
+          request.onreadystatechange = function() {
+            if (request.readyState === 4 && request.status === 200) {
+              let tmp = '<p style="margin-bottom:0.5em">' + request.responseText + '</p>';
+              doWork(txt + tmp);
+            }
+          }
+          request.send(null);
         } else {
-          document.querySelector("#text").innerHTML = txt + str;
-          let element = document.documentElement;
-          onResize(element, txt + str);
-          bottom(element);
+          doWork(txt + str);
         }
 
         // 60秒で消去
@@ -139,6 +138,13 @@
           top: bottom,
           behavior: 'smooth',
         });
+      }
+
+      function doWork(txt) {
+        document.querySelector("#text").innerHTML = txt;
+        let element = document.documentElement;
+        onResize(element, txt);
+        bottom(element);
       }
 
       function timeout(d) {
