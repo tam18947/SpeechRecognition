@@ -40,4 +40,4 @@
 
 [append bottom interim onresize timeout save translate button br](https://tam18947.github.io/SpeechRecognition/append/bottom/interim/onresize/timeout/save/translate/button/br.html)
 
-[append bottom interim onresize timeout save translate button br](https://tam18947.github.io/SpeechRecognition/append/bottom/interim/onresize/timeout/save/translate/button/p.html)
+[append bottom interim onresize timeout save translate button p](https://tam18947.github.io/SpeechRecognition/append/bottom/interim/onresize/timeout/save/translate/button/p.html)
