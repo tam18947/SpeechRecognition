@@ -94,7 +94,7 @@
             txt += str;
             doWork(txt);
           }
-        } else if (document.getElementById('trans').value != 'none' && document.getElementById('trans').value != recognition.lang) {
+        /*} else if (document.getElementById('trans').value != 'none' && document.getElementById('trans').value != recognition.lang) {
           query = TRANS_URL + '?text=' + event.results[0][0].transcript + '&source=' + trans_sourcelang + '&target=' + document.getElementById('trans').value;
           request.open('GET', query, true);
           request.onreadystatechange = function() {
@@ -103,7 +103,7 @@
               doWork(txt + tmp);
             }
           }
-          request.send(null);
+          request.send(null);*/
         } else {
           doWork(txt + str);
         }
