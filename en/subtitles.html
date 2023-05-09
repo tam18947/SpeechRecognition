@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Speech Recognition</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-  <link rel="icon" type="image/x-icon" href="../../../../../../../../favicon.ico">
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
   <style>
     .item {
       opacity: 0;
@@ -24,24 +24,24 @@
       <input id="size1" type="range" value="500" min="25" max="500" step="5" oninput="document.getElementById('text').style.fontSize = this.value + '%'; document.getElementById('text_size_view1').innerHTML=this.value;" />
       <span id="text_size_view1">500</span>%
       <select id="trans">
-        <option value="none" selected>なし</option>
-        <!--<option value="ja">日本語</option>-->
-        <option value="en">英語</option>
-        <option value="ko">韓国語</option>
-        <option value="zh-CN">中国語</option>
-        <option value="zh-TW">台湾語</option>
-        <option value="fr">フランス語</option>
-        <option value="it">イタリア語</option>
-        <option value="de">ドイツ語</option>
-        <option value="ru">ロシア語</option>
-        <option value="es">スペイン語</option>
-        <option value="pt">ポルトガル語</option>
-        <option value="nl">オランダ語</option>
-        <option value="id">インドネシア語</option>
-        <option value="vi">ベトナム語</option>
-        <option value="th">タイ語</option>
-        <option value="ar">アラビア語</option>
-        <option value="so">ソマリ語</option>
+        <option value="none" selected>None</option>
+        <option value="ja">Japanese</option>
+        <!-- <option value="en">English</option> -->
+        <option value="ko">Korean</option>
+        <option value="zh-CN">Chinese</option>
+        <option value="zh-TW">Taiwanese</option>
+        <option value="fr">French</option>
+        <option value="it">Italian</option>
+        <option value="de">German</option>
+        <option value="ru">Russian</option>
+        <option value="es">Spanish</option>
+        <option value="pt">Portuguese</option>
+        <option value="nl">Dutch</option>
+        <option value="id">Indonesian</option>
+        <option value="vi">Vietnamese</option>
+        <option value="th">Thai</option>
+        <option value="ar">Arabic</option>
+        <option value="so">Somali</option>
       </select>
       <button type="button" class="btn btn-primary" id="button" onclick="toggleStartStop()">Start</button>
       <button type="button" class="btn btn-primary" id="buttonClear" onclick="textClear()">Clear</button>
@@ -59,7 +59,7 @@
       const recognition = new SpeechRecognition();
 
       // 音声認識用設定
-      recognition.lang = 'ja';
+      recognition.lang = 'en';
       recognition.interimResults = true;
       recognition.continuous = false;
       let txt = "";
@@ -70,9 +70,8 @@
       // 翻訳API用設定
       var request = new XMLHttpRequest();
       // 翻訳用設定
-      var trans_sourcelang = 'ja';
-      //var TRANS_URL = 'https://script.google.com/macros/s/' + 'AKfycbyoTPxFy7lwr8by0d3GRVqsyqnjeUZ2wFFUOLJNJnwu8OSgAPZPYgtXtDeorHg71R4' + '/exec';
-      var TRANS_URL = 'https://script.google.com/macros/s/AKfycbzgz10-7jgDYp55xFVAFqfESgWKOLfx0IZtwO2JYERyicDDqcsnvKEOsXtC5nI-ft52/exec';
+      var trans_sourcelang = 'en';
+      var TRANS_URL = 'https://script.google.com/macros/s/AKfycbyoTPxFy7lwr8by0d3GRVqsyqnjeUZ2wFFUOLJNJnwu8OSgAPZPYgtXtDeorHg71R4/exec';
       var query = '';
 
       recognition.onresult = function(event) {
