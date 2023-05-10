@@ -1,5 +1,7 @@
 # SpeechRecognition
 
-[日本語を音声認識](https://tam18947.github.io/SpeechRecognition/ja/subtitles.html)
+[音声認識-翻訳](https://tam18947.github.io/SpeechRecognition/subtitles.html)
 
-[英語を音声認識](https://tam18947.github.io/SpeechRecognition/en/subtitles.html)
+[日本語翻訳](https://tam18947.github.io/SpeechRecognition/ja/subtitles.html)
+
+[英語翻訳](https://tam18947.github.io/SpeechRecognition/en/subtitles.html)
