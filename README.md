@@ -32,9 +32,6 @@ Web Speech API に対応した **Google Chrome** または **Microsoft Edge**。
 | `ui` | 表示言語 | `ja` / `en` |
 
 例: `subtitles.html?source=ja&target=en&original=1&bg=transparent&size=300`
-
-旧 URL の `ja/subtitles.html`・`en/subtitles.html` は、それぞれ `subtitles.html?source=ja` / `?source=en` に転送されます。
-
 ## 構成
 
 ```
@@ -45,7 +42,6 @@ assets/css/subtitles.css 字幕ページのスタイル
 assets/js/config.js     対応言語・UI 文言
 assets/js/subtitles.js  音声認識・翻訳・表示・保存の処理
 gas/Code.gs             利用者が自分で公開する翻訳用 GAS
-ja/, en/                旧 URL からの転送用
 ```
 
 ビルド不要の静的サイトです。ローカルで試す場合は任意の静的サーバーで `localhost` から開いてください。
