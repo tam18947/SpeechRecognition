@@ -1,0 +1,234 @@
+:root {
+  --bg: #f7f8fa;
+  --surface: #ffffff;
+  --fg: #1d2129;
+  --muted: #5d6573;
+  --border: #e2e5ea;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --code-bg: #eef1f5;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181d;
+    --surface: #1f2228;
+    --fg: #e8eaee;
+    --muted: #a0a7b3;
+    --border: #2f333b;
+    --accent: #3b82f6;
+    --accent-hover: #60a5fa;
+    --code-bg: #2a2e36;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Meiryo", sans-serif;
+  line-height: 1.7;
+}
+
+.page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 48px 20px 24px;
+}
+
+h1,
+h2 {
+  line-height: 1.3;
+}
+
+h2 {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+}
+
+section {
+  margin-top: 48px;
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  background: var(--code-bg);
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.9em;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------- ヒーロー */
+
+.hero {
+  text-align: center;
+}
+
+.hero__icon {
+  padding: 8px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.hero h1 {
+  margin: 12px 0 8px;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+.hero__lead {
+  margin: 0 auto;
+  max-width: 36em;
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 22px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--fg);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+}
+
+.btn--primary {
+  border-color: transparent;
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--accent-hover);
+}
+
+/* ---------------------------------------------------------------- カード */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--fg);
+  text-decoration: none;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.card span {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* ---------------------------------------------------------------- 本文 */
+
+.steps,
+.features,
+.note ul {
+  margin: 0;
+  padding-left: 1.4em;
+}
+
+.steps li,
+.features li {
+  margin-bottom: 6px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+th,
+td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.example {
+  overflow-x: auto;
+}
+
+.note {
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.note h2 {
+  color: var(--fg);
+  font-size: 1rem;
+}
+
+.footer {
+  padding: 32px 20px 48px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 0.9rem;
+}

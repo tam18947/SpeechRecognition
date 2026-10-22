@@ -1,7 +1,70 @@
-# SpeechRecognition
+# Speech Recognition Subtitles
 
-[音声認識-Google翻訳](https://tam18947.github.io/SpeechRecognition/subtitles.html)
+話した言葉をリアルタイムで大きな字幕として表示するブラウザツールです。翻訳表示、テキスト保存、配信用の透過背景に対応しています。
 
-[日本語音声認識-Google翻訳](https://tam18947.github.io/SpeechRecognition/ja/subtitles.html)
+- トップページ: https://tam18947.github.io/SpeechRecognition/
+- 字幕ページ: https://tam18947.github.io/SpeechRecognition/subtitles.html
 
-[英語音声認識-Google翻訳](https://tam18947.github.io/SpeechRecognition/en/subtitles.html)
+## 機能
+
+- 音声認識による字幕表示（認識途中の文字も薄く表示）
+- 翻訳（ブラウザ内蔵の翻訳を優先し、使えなければ自分の GAS。翻訳文のみ / 原文と並べて表示）
+- 一定時間無音で画面を自動消去、消去時の自動保存
+- 認識内容を時刻付きテキストで保存
+- 背景をダーク・黒・グリーンバック・透明から選択（OBS などに重ねられます）
+- 設定はブラウザ（localStorage）に保存され、URL パラメータでも指定可能
+
+## 動作環境
+
+Web Speech API に対応した **Google Chrome** または **Microsoft Edge**。マイクを使うため HTTPS または `localhost` で開いてください。
+
+## URL パラメータ
+
+| パラメータ | 内容 | 値 |
+| --- | --- | --- |
+| `source` | 話す言語 | `ja`, `en`, `ko`, `zh-CN`, `zh-TW`, `fr`, `it`, `de`, `ru`, `es`, `pt`, `nl`, `id`, `vi`, `th`, `ar`, `so` |
+| `target` | 翻訳先の言語 | 上記の言語コード / `none` |
+| `original` | 翻訳時に原文も表示 | `1` / `0` |
+| `size` | 文字サイズ（%） | `25`〜`500` |
+| `clear` | 無音で消去するまでの秒数 | `0`（無効）, `30`, `60`, `120`, `300` |
+| `save` | 自動消去のときに保存 | `1` / `0` |
+| `bg` | 背景 | `dark`, `black`, `green`, `transparent` |
+| `ui` | 表示言語 | `ja` / `en` |
+
+例: `subtitles.html?source=ja&target=en&original=1&bg=transparent&size=300`
+
+旧 URL の `ja/subtitles.html`・`en/subtitles.html` は、それぞれ `subtitles.html?source=ja` / `?source=en` に転送されます。
+
+## 構成
+
+```
+index.html              トップページ（使い方・プリセット）
+subtitles.html          字幕ページ
+assets/css/home.css     トップページのスタイル
+assets/css/subtitles.css 字幕ページのスタイル
+assets/js/config.js     対応言語・UI 文言
+assets/js/subtitles.js  音声認識・翻訳・表示・保存の処理
+gas/Code.gs             利用者が自分で公開する翻訳用 GAS
+ja/, en/                旧 URL からの転送用
+```
+
+ビルド不要の静的サイトです。ローカルで試す場合は任意の静的サーバーで `localhost` から開いてください。
+
+## 翻訳のしくみ
+
+1. **ブラウザ内蔵の翻訳**（Chrome の [Translator API](https://developer.chrome.com/docs/ai/translator-api)）を優先します。パソコンの中で翻訳するためサーバー不要・回数上限なしです。言語の組み合わせごとに初回だけモデルをダウンロードします。
+2. 内蔵の翻訳が使えない場合（Edge など、または非対応の言語の組み合わせ）は、**利用者が字幕ページの ⚙ に登録した自分の GAS** で翻訳します。
+3. どちらも使えない場合は原文のまま表示し、GAS の設定を促します。
+
+⚙ の「優先する翻訳」で **GAS を優先** を選ぶと、順番が逆（GAS → 内蔵翻訳）になります。一般に GAS（Google 翻訳のサーバー）のほうが訳の精度が高い傾向があり、内蔵翻訳は通信がないぶん速く、回数の上限もありません。
+
+管理者が用意した共通の翻訳サーバーはありません。GAS の URL は各利用者のブラウザ（localStorage）にだけ保存され、URL パラメータでは指定できません（リンク経由で認識テキストの送信先を変えられないようにするため）。
+
+### 自分の GAS を用意する
+
+1. [Google Apps Script](https://script.google.com/home/projects/create) で新しいプロジェクトを作る
+2. エディタの中身を [`gas/Code.gs`](gas/Code.gs) に置き換えて保存
+3. 「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」、**次のユーザーとして実行: 自分**、**アクセスできるユーザー: 全員** でデプロイ（初回は権限の承認が必要）
+4. 発行された `https://script.google.com/macros/s/…/exec` を字幕ページの ⚙ に貼り付け、「テスト」で確認して「保存」
+
+GAS は `GET ?text=...&source=...&target=...` に対して翻訳結果をプレーンテキストで返します。同じ形式で応答するものなら GAS 以外のエンドポイントも登録できます。
