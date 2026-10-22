@@ -17,6 +17,7 @@
       <button type="button" class="btn btn--primary" id="toggle" aria-pressed="false" data-i18n="start">開始</button>
       <button type="button" class="btn" id="clear" data-i18n="clear">クリア</button>
       <button type="button" class="btn" id="download" data-i18n="save">保存</button>
+      <button type="button" class="btn btn--icon" id="openSettings" data-i18n-label="settingsTitle">⚙</button>
       <span class="status" id="status" role="status">
         <span class="status__dot" aria-hidden="true"></span>
         <span id="statusText" data-i18n="statusIdle">停止中</span>
@@ -33,7 +34,6 @@
         <select id="target"></select>
       </label>
       <span class="engine" id="translateStatus"></span>
-      <button type="button" class="btn btn--icon" id="openSettings" data-i18n-label="translationSettings">⚙</button>
       <label class="field field--check">
         <input type="checkbox" id="showOriginal">
         <span data-i18n="showOriginal">原文も表示</span>
@@ -45,6 +45,10 @@
         <span data-i18n="size">文字</span>
         <input type="range" id="size" min="25" max="500" step="5">
         <output id="sizeValue" for="size" class="field__value"></output>
+      </label>
+      <label class="field">
+        <span data-i18n="layout">表示</span>
+        <select id="layout"></select>
       </label>
       <label class="field">
         <span data-i18n="autoClear">無音で消去</span>
@@ -70,28 +74,70 @@
 
   <dialog class="dialog" id="settingsDialog" aria-labelledby="settingsTitle">
     <form method="dialog" id="settingsForm">
-      <h2 class="dialog__title" id="settingsTitle" data-i18n="translationSettings">翻訳の設定</h2>
-      <p class="dialog__status">
-        <span data-i18n="builtinLabel">ブラウザ内蔵の翻訳（現在の言語）:</span>
-        <strong id="builtinStatus"></strong>
-      </p>
-      <fieldset class="dialog__engine">
-        <legend data-i18n="enginePriority">優先する翻訳</legend>
-        <label><input type="radio" name="engine" value="builtin"> <span data-i18n="preferBuiltin">内蔵翻訳を優先</span></label>
-        <label><input type="radio" name="engine" value="gas"> <span data-i18n="preferGas">GAS を優先</span></label>
-        <p class="dialog__help" data-i18n="engineHelp">優先した方が使えないときは、もう一方で翻訳します。</p>
-      </fieldset>
-      <label class="dialog__field">
-        <span data-i18n="gasUrl">自分の GAS ウェブアプリの URL</span>
-        <input type="url" id="gasUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" spellcheck="false">
-      </label>
-      <p class="dialog__help">
-        <span data-i18n="gasHelp"></span>
-        <a href="index.html#gas" target="_blank" rel="noopener" data-i18n="gasSetupLink">GAS の用意のしかた</a>
-      </p>
-      <p class="dialog__result" id="gasResult" role="status"></p>
+      <h2 class="dialog__title" id="settingsTitle" data-i18n="settingsTitle">設定</h2>
+
+      <section class="dialog__section">
+        <h3 data-i18n="sectionTranslation">翻訳</h3>
+        <p class="dialog__status">
+          <span data-i18n="builtinLabel">ブラウザ内蔵の翻訳（現在の言語）:</span>
+          <strong id="builtinStatus"></strong>
+        </p>
+        <fieldset class="dialog__choices">
+          <legend data-i18n="enginePriority">優先する翻訳</legend>
+          <label><input type="radio" name="engine" value="builtin"> <span data-i18n="preferBuiltin">内蔵翻訳を優先</span></label>
+          <label><input type="radio" name="engine" value="gas"> <span data-i18n="preferGas">GAS を優先</span></label>
+          <p class="dialog__help" data-i18n="engineHelp">優先した方が使えないときは、もう一方で翻訳します。</p>
+        </fieldset>
+        <label class="dialog__field">
+          <span data-i18n="gasUrl">自分の GAS ウェブアプリの URL</span>
+          <span class="dialog__inline">
+            <input type="url" id="gasUrl" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off" spellcheck="false">
+            <button type="button" class="btn" id="gasTest" data-i18n="gasTest">テスト</button>
+          </span>
+        </label>
+        <p class="dialog__help">
+          <span data-i18n="gasHelp"></span>
+          <a href="index.html#gas" target="_blank" rel="noopener" data-i18n="gasSetupLink">GAS の用意のしかた</a>
+        </p>
+        <p class="dialog__result" id="gasResult" role="status"></p>
+      </section>
+
+      <section class="dialog__section">
+        <h3 data-i18n="sectionDictionary">置換辞書</h3>
+        <textarea id="dictionary" rows="5" spellcheck="false"></textarea>
+        <p class="dialog__help" data-i18n="dictionaryHelp"></p>
+        <p class="dialog__result" id="dictionaryResult" role="status"></p>
+      </section>
+
+      <section class="dialog__section">
+        <h3 data-i18n="sectionDisplay">表示</h3>
+        <div class="dialog__row">
+          <label class="dialog__inline">
+            <span data-i18n="textColor">文字色</span>
+            <input type="color" id="textColor">
+          </label>
+          <label class="dialog__inline">
+            <span data-i18n="outline">縁取り</span>
+            <select id="outline"></select>
+          </label>
+        </div>
+        <label class="dialog__inline">
+          <input type="checkbox" id="band">
+          <span data-i18n="band">テロップに背景の帯を付ける</span>
+        </label>
+      </section>
+
+      <section class="dialog__section">
+        <h3 data-i18n="sectionSave">保存形式</h3>
+        <fieldset class="dialog__choices">
+          <label><input type="checkbox" name="saveFormat" value="txt"> <span data-i18n="saveTxt">テキスト</span></label>
+          <label><input type="checkbox" name="saveFormat" value="srt"> <span data-i18n="saveSrt">SRT</span></label>
+          <label><input type="checkbox" name="saveFormat" value="vtt"> <span data-i18n="saveVtt">WebVTT</span></label>
+          <p class="dialog__help" data-i18n="saveHelp"></p>
+        </fieldset>
+      </section>
+
       <div class="dialog__actions">
-        <button type="button" class="btn" id="gasTest" data-i18n="gasTest">テスト</button>
         <span class="dialog__spacer"></span>
         <button type="button" class="btn" id="cancelSettings" data-i18n="cancel">キャンセル</button>
         <button type="submit" class="btn btn--primary" data-i18n="saveSettings">保存</button>

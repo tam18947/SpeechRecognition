@@ -34,13 +34,21 @@ body[data-bg="black"] { --bg: #000; }
 body[data-bg="green"] { --bg: #00b140; }
 body[data-bg="transparent"] { --bg: transparent; }
 
-/* 背景が明るい/透明なときも読めるように縁取りする */
-body[data-bg="green"] .screen,
-body[data-bg="transparent"] .screen {
+/* 縁取り。「自動」は背景が明るい/透明なときだけ付ける */
+body[data-outline="auto"][data-bg="green"] .screen,
+body[data-outline="auto"][data-bg="transparent"] .screen,
+body[data-outline="thin"] .screen {
   text-shadow:
     0 0 0.06em #000,
     0 0 0.06em #000,
     0 0.03em 0.1em #000;
+}
+
+body[data-outline="thick"] .screen {
+  text-shadow:
+    0.05em 0 #000, -0.05em 0 #000, 0 0.05em #000, 0 -0.05em #000,
+    0.035em 0.035em #000, -0.035em 0.035em #000, 0.035em -0.035em #000, -0.035em -0.035em #000,
+    0 0.04em 0.12em #000;
 }
 
 /* ---------------------------------------------------------------- 操作パネル */
@@ -215,7 +223,8 @@ input[type="range"] {
 /* ---------------------------------------------------------------- 翻訳の設定 */
 
 .dialog {
-  width: min(520px, calc(100vw - 32px));
+  width: min(560px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
   padding: 24px;
   border: 1px solid var(--panel-border);
   border-radius: 12px;
@@ -245,34 +254,89 @@ input[type="range"] {
   color: var(--panel-fg);
 }
 
-.dialog__engine {
+.dialog__section {
+  padding: 16px 0;
+  border-top: 1px solid var(--panel-border);
+}
+
+.dialog__section h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.dialog__choices {
   display: flex;
   flex-wrap: wrap;
   gap: 4px 20px;
-  margin: 0 0 20px;
+  margin: 0 0 16px;
   padding: 0;
   border: 0;
 }
 
-.dialog__engine legend {
+.dialog__section > .dialog__choices:last-child {
+  margin-bottom: 0;
+}
+
+.dialog__choices legend {
   margin-bottom: 6px;
   padding: 0;
 }
 
-.dialog__engine label {
+.dialog__choices label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   cursor: pointer;
 }
 
-.dialog__engine input {
+.dialog__choices .dialog__help {
+  flex-basis: 100%;
+  margin-top: 2px;
+}
+
+.dialog input[type="radio"],
+.dialog input[type="checkbox"] {
   accent-color: var(--accent);
 }
 
-.dialog__engine .dialog__help {
-  flex-basis: 100%;
-  margin-top: 2px;
+.dialog__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-bottom: 10px;
+}
+
+.dialog__inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dialog__inline input[type="url"] {
+  flex: 1;
+  min-width: 0;
+}
+
+.dialog input[type="color"] {
+  width: 44px;
+  height: 30px;
+  padding: 2px;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  background: var(--control-bg);
+  cursor: pointer;
+}
+
+.dialog textarea {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  background: var(--control-bg);
+  color: inherit;
+  font: inherit;
+  resize: vertical;
 }
 
 .dialog__field {
@@ -301,9 +365,12 @@ input[type="range"] {
 }
 
 .dialog__result {
-  min-height: 1.6em;
-  margin: 12px 0 0;
+  margin: 8px 0 0;
   overflow-wrap: anywhere;
+}
+
+.dialog__result:empty {
+  display: none;
 }
 
 .dialog__result[data-state="ok"] { color: #86efac; }
@@ -312,7 +379,8 @@ input[type="range"] {
 .dialog__actions {
   display: flex;
   gap: 8px;
-  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--panel-border);
 }
 
 .dialog__spacer {
@@ -327,6 +395,7 @@ input[type="range"] {
   inset: 0;
   overflow-y: auto;
   padding: 0.3em 0.5em;
+  color: var(--text-color, var(--fg));
   font-size: calc(var(--font-scale) * 1rem);
   font-weight: 600;
   line-height: 1.2;
@@ -370,6 +439,44 @@ input[type="range"] {
 .interim {
   margin-bottom: 0.3em;
   opacity: 0.6;
+}
+
+/* ---------------------------------------------------------------- テロップ */
+
+/* 画面下部に、最新の数件だけを表示する */
+body[data-layout^="telop"] .screen {
+  inset: auto 0 0;
+  max-height: 100%;
+  overflow: hidden;
+  padding: 0.25em 0.6em;
+  text-align: center;
+}
+
+body[data-layout^="telop"] .entry:last-child,
+body[data-layout^="telop"] .interim {
+  margin-bottom: 0;
+}
+
+body.has-band[data-layout^="telop"] .screen {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* 字幕がないときは帯ごと隠す */
+body[data-layout^="telop"] .screen:not(:has(.entry, .interim:not(:empty))) {
+  visibility: hidden;
+}
+
+body[data-layout="telop1"] .entry:not(:nth-last-child(-n + 1)),
+body[data-layout="telop2"] .entry:not(:nth-last-child(-n + 2)),
+body[data-layout="telop3"] .entry:not(:nth-last-child(-n + 3)) {
+  display: none;
+}
+
+/* 認識途中の文字が出ている間は、その 1 行ぶん古いものを隠す */
+body[data-layout="telop1"] .lines:has(+ .interim:not(:empty)) .entry,
+body[data-layout="telop2"] .lines:has(+ .interim:not(:empty)) .entry:not(:nth-last-child(-n + 1)),
+body[data-layout="telop3"] .lines:has(+ .interim:not(:empty)) .entry:not(:nth-last-child(-n + 2)) {
+  display: none;
 }
 
 /* ---------------------------------------------------------------- 通知 */

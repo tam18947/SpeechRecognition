@@ -6,6 +6,12 @@
   const SIZE_STEP = 5;
   const AUTO_CLEAR_OPTIONS = [0, 30, 60, 120, 300];
   const BACKGROUNDS = { dark: 'bgDark', black: 'bgBlack', green: 'bgGreen', transparent: 'bgTransparent' };
+  const LAYOUTS = { scroll: 'layoutScroll', telop1: 'layoutTelop1', telop2: 'layoutTelop2', telop3: 'layoutTelop3' };
+  const OUTLINES = { auto: 'outlineAuto', none: 'outlineNone', thin: 'outlineThin', thick: 'outlineThick' };
+  const SAVE_FORMATS = ['txt', 'srt', 'vtt'];
+  const DICTIONARY_MAX_LENGTH = 20000;
+  const CUE_LINGER = 2000; // 字幕ファイルで、発言の確定後も表示しておく時間
+  const CUE_MIN_DURATION = 800;
   const MAX_VISIBLE_ENTRIES = 100;
   const RESTART_DELAY_MIN = 250;
   const RESTART_DELAY_MAX = 8000;
@@ -23,6 +29,12 @@
     autoClear: 60,
     autoSave: true,
     background: 'dark',
+    layout: 'scroll',
+    textColor: '#f5f6f8',
+    outline: 'auto',
+    band: true,
+    saveFormats: ['txt'],
+    dictionary: '',
     engine: 'builtin', // 優先する翻訳: 'builtin' | 'gas'
     gasUrl: '',
   };
@@ -37,6 +49,11 @@
     clear: 'autoClear',
     save: 'autoSave',
     bg: 'background',
+    layout: 'layout',
+    color: 'textColor',
+    outline: 'outline',
+    band: 'band',
+    format: 'saveFormats',
   };
 
   const $ = (id) => document.getElementById(id);
@@ -55,6 +72,7 @@
     autoClear: $('autoClear'),
     autoSave: $('autoSave'),
     background: $('background'),
+    layout: $('layout'),
     screen: $('screen'),
     lines: $('lines'),
     interim: $('interim'),
@@ -65,6 +83,11 @@
     gasUrl: $('gasUrl'),
     gasTest: $('gasTest'),
     gasResult: $('gasResult'),
+    dictionary: $('dictionary'),
+    dictionaryResult: $('dictionaryResult'),
+    textColor: $('textColor'),
+    outline: $('outline'),
+    band: $('band'),
     cancelSettings: $('cancelSettings'),
   };
 
@@ -79,6 +102,7 @@
   let startedAt = 0;
   let restartDelay = RESTART_DELAY_MIN;
   let restartTimer = 0;
+  let utteranceStartedAt = null; // 認識中の発言の最初の結果が届いた時刻
   let silenceTimer = 0;
   let noticeTimer = 0;
   let wakeLock = null;
@@ -91,7 +115,10 @@
 
   /** 前回の保存/リセット以降に確定した発話（ダウンロード対象） */
   let transcript = [];
+  /** 字幕ファイル (SRT / VTT) で 0 秒とする時刻 */
+  let transcriptOrigin = null;
   let unsaved = false;
+  let applyDictionary = (text) => text;
 
   // ---------------------------------------------------------------------------
   // 設定
@@ -125,9 +152,30 @@
       autoClear: AUTO_CLEAR_OPTIONS.includes(autoClear) ? autoClear : DEFAULTS.autoClear,
       autoSave: toBoolean(s.autoSave, DEFAULTS.autoSave),
       background: s.background in BACKGROUNDS ? s.background : DEFAULTS.background,
+      layout: s.layout in LAYOUTS ? s.layout : DEFAULTS.layout,
+      textColor: sanitizeColor(s.textColor) || DEFAULTS.textColor,
+      outline: s.outline in OUTLINES ? s.outline : DEFAULTS.outline,
+      band: toBoolean(s.band, DEFAULTS.band),
+      saveFormats: sanitizeFormats(s.saveFormats),
+      dictionary: String(s.dictionary ?? '').slice(0, DICTIONARY_MAX_LENGTH),
       engine: s.engine === 'gas' ? 'gas' : 'builtin',
       gasUrl: sanitizeUrl(s.gasUrl),
     };
+  }
+
+  /** "#rrggbb" / "rrggbb" / "#rgb" を "#rrggbb" にそろえる（URL では # を省略できる） */
+  function sanitizeColor(value) {
+    const hex = String(value ?? '').trim().replace(/^#/, '').toLowerCase();
+    if (/^[0-9a-f]{6}$/.test(hex)) return `#${hex}`;
+    if (/^[0-9a-f]{3}$/.test(hex)) return `#${[...hex].map((c) => c + c).join('')}`;
+    return '';
+  }
+
+  /** 配列または "txt,srt" のような文字列を受け付ける */
+  function sanitizeFormats(value) {
+    const list = Array.isArray(value) ? value : String(value ?? '').split(',');
+    const formats = SAVE_FORMATS.filter((format) => list.map((v) => String(v).trim()).includes(format));
+    return formats.length ? formats : [...DEFAULTS.saveFormats];
   }
 
   function sanitizeUrl(value) {
@@ -165,8 +213,13 @@
 
   function applySettings() {
     document.body.dataset.bg = settings.background;
+    document.body.dataset.layout = settings.layout;
+    document.body.dataset.outline = settings.outline;
+    document.body.classList.toggle('has-band', settings.band);
     document.body.classList.toggle('show-original', settings.showOriginal);
     ui.screen.style.setProperty('--font-scale', settings.size / 100);
+    ui.screen.style.setProperty('--text-color', settings.textColor);
+    applyDictionary = buildReplacer(parseDictionary(settings.dictionary).rules);
     ui.sizeValue.textContent = `${settings.size}%`;
     ui.showOriginal.disabled = settings.target === 'none';
   }
@@ -190,6 +243,9 @@
     fillSelect(ui.target, [['none', t('none')], ...LANGUAGES.map((lang) => [lang.code, lang[uiLang]])]);
     fillSelect(ui.autoClear, AUTO_CLEAR_OPTIONS.map((sec) => [sec, sec ? `${sec}${t('seconds')}` : t('off')]));
     fillSelect(ui.background, Object.entries(BACKGROUNDS).map(([value, key]) => [value, t(key)]));
+    fillSelect(ui.layout, Object.entries(LAYOUTS).map(([value, key]) => [value, t(key)]));
+    fillSelect(ui.outline, Object.entries(OUTLINES).map(([value, key]) => [value, t(key)]));
+    ui.dictionary.placeholder = t('dictionaryPlaceholder');
 
     ui.source.value = settings.source;
     ui.target.value = settings.target;
@@ -198,6 +254,7 @@
     ui.autoClear.value = settings.autoClear;
     ui.autoSave.checked = settings.autoSave;
     ui.background.value = settings.background;
+    ui.layout.value = settings.layout;
     applySettings();
     bindEvents();
     updateControls();
@@ -240,21 +297,17 @@
     });
     ui.autoSave.addEventListener('change', () => updateSettings({ autoSave: ui.autoSave.checked }));
     ui.background.addEventListener('change', () => updateSettings({ background: ui.background.value }));
+    ui.layout.addEventListener('change', () => {
+      updateSettings({ layout: ui.layout.value });
+      scrollToBottom();
+    });
 
     ui.openSettings.addEventListener('click', openSettingsDialog);
     ui.cancelSettings.addEventListener('click', () => ui.dialog.close());
     ui.gasUrl.addEventListener('input', () => setGasResult(''));
     ui.gasTest.addEventListener('click', testGas);
-    ui.dialogForm.addEventListener('submit', (event) => {
-      const value = ui.gasUrl.value.trim();
-      if (value && !sanitizeUrl(value)) {
-        event.preventDefault();
-        setGasResult(t('gasInvalidUrl'), 'error');
-        return;
-      }
-      updateSettings({ gasUrl: value, engine: ui.dialogForm.elements.engine.value });
-      prepareTranslation();
-    });
+    ui.dictionary.addEventListener('input', () => setResult(ui.dictionaryResult, ''));
+    ui.dialogForm.addEventListener('submit', saveSettingsDialog);
 
     document.addEventListener('visibilitychange', () => {
       if (listening && document.visibilityState === 'visible') requestWakeLock();
@@ -284,6 +337,7 @@
     recognition ??= createRecognition();
     listening = true;
     restartDelay = RESTART_DELAY_MIN;
+    transcriptOrigin ??= new Date();
     startRecognition();
     // ユーザー操作の直後に呼び、内蔵翻訳のモデルが必要ならここでダウンロードを始める
     prepareTranslation();
@@ -313,18 +367,28 @@
   }
 
   function handleResult(event) {
+    const now = new Date();
+    utteranceStartedAt ??= now;
     let interim = '';
+    let confirmed = false;
     for (let i = event.resultIndex; i < event.results.length; i++) {
       const result = event.results[i];
       if (result.isFinal) {
-        const text = result[0].transcript.trim();
-        if (text) addEntry(text);
+        const text = applyDictionary(result[0].transcript.trim());
+        if (text) {
+          addEntry(text, utteranceStartedAt ?? now, now);
+          confirmed = true;
+        }
+        utteranceStartedAt = null;
       } else {
         interim += result[0].transcript;
       }
     }
-    setInterim(interim.trim());
-    resetSilenceTimer();
+    interim = interim.trim();
+    if (interim) utteranceStartedAt ??= now;
+    setInterim(applyDictionary(interim));
+    // 雑音でも途中結果は出たり消えたりするため、無音の判定は確定した字幕だけで行う
+    if (confirmed) resetSilenceTimer();
   }
 
   function handleError(event) {
@@ -355,6 +419,7 @@
 
   function handleEnd() {
     setInterim('');
+    utteranceStartedAt = null;
     if (!listening) return;
     // 開始直後に終わるような失敗が続く場合は間隔を空けて再試行する
     restartDelay = Date.now() - startedAt < 1000
@@ -380,10 +445,11 @@
   // 字幕の表示
   // ---------------------------------------------------------------------------
 
-  function addEntry(text) {
+  function addEntry(text, start, end) {
     const needsTranslation = settings.target !== 'none' && settings.target !== settings.source;
     const entry = {
-      time: new Date(),
+      start,
+      end,
       text,
       source: settings.source,
       target: needsTranslation ? settings.target : null,
@@ -406,6 +472,7 @@
 
     ui.lines.append(el);
     while (ui.lines.childElementCount > MAX_VISIBLE_ENTRIES) ui.lines.firstElementChild.remove();
+    transcriptOrigin ??= start;
     transcript.push(entry);
     unsaved = true;
     updateControls();
@@ -454,6 +521,8 @@
 
   function clearScreen() {
     ui.lines.replaceChildren();
+    // 確定しないまま残った認識途中の文字も消す
+    ui.interim.textContent = '';
     updateControls();
   }
 
@@ -610,16 +679,91 @@
   }
 
   // ---------------------------------------------------------------------------
-  // 翻訳の設定ダイアログ
+  // 置換辞書
+  // ---------------------------------------------------------------------------
+
+  /** 1 行 1 ルール「認識結果 → 置換後」。区切りは →、=>、タブのいずれか */
+  function parseDictionary(text) {
+    const rules = [];
+    const invalidLines = [];
+    text.split(/\r?\n/).forEach((raw, index) => {
+      const line = raw.trim();
+      if (!line || line.startsWith('#')) return;
+      const match = line.match(/^(.+?)\s*(?:→|=>|\t)\s*(.*)$/);
+      if (match && match[1].trim()) rules.push([match[1].trim(), match[2].trim()]);
+      else invalidLines.push(index + 1);
+    });
+    return { rules, invalidLines };
+  }
+
+  /**
+   * 置換関数を作る。Chrome は文節ごとにスペースを入れることがあるため、
+   * スペースの有無と英字の大文字・小文字を無視して照合する。長い語句を優先する。
+   */
+  function buildReplacer(rules) {
+    const normalize = (s) => s.replace(/\s+/g, '').toLowerCase();
+    const map = new Map();
+    for (const [from, to] of rules) {
+      const key = normalize(from);
+      if (key) map.set(key, to);
+    }
+    if (!map.size) return (text) => text;
+    const escape = (c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const pattern = [...map.keys()]
+      .sort((a, b) => b.length - a.length)
+      .map((key) => [...key].map(escape).join('\\s*'))
+      .join('|');
+    const regexp = new RegExp(pattern, 'giu');
+    return (text) => text.replace(regexp, (matched) => map.get(normalize(matched)) ?? matched);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 設定ダイアログ
   // ---------------------------------------------------------------------------
 
   async function openSettingsDialog() {
+    const { elements } = ui.dialogForm;
     ui.gasUrl.value = settings.gasUrl;
-    ui.dialogForm.elements.engine.value = settings.engine;
+    elements.engine.value = settings.engine;
+    ui.dictionary.value = settings.dictionary;
+    ui.textColor.value = settings.textColor;
+    ui.outline.value = settings.outline;
+    ui.band.checked = settings.band;
+    for (const box of elements.saveFormat) box.checked = settings.saveFormats.includes(box.value);
     setGasResult('');
+    setResult(ui.dictionaryResult, '');
     ui.builtinStatus.textContent = '…';
     ui.dialog.showModal();
     ui.builtinStatus.textContent = await describeBuiltin();
+  }
+
+  function saveSettingsDialog(event) {
+    const { elements } = ui.dialogForm;
+    const gasUrl = ui.gasUrl.value.trim();
+    const { invalidLines } = parseDictionary(ui.dictionary.value);
+    let valid = true;
+    if (gasUrl && !sanitizeUrl(gasUrl)) {
+      setGasResult(t('gasInvalidUrl'), 'error');
+      valid = false;
+    }
+    if (invalidLines.length) {
+      setResult(ui.dictionaryResult, t('dictionaryInvalid') + invalidLines.join(', ') + t('dictionaryLineSuffix'), 'error');
+      valid = false;
+    }
+    if (!valid) {
+      event.preventDefault();
+      return;
+    }
+    updateSettings({
+      gasUrl,
+      engine: elements.engine.value,
+      dictionary: ui.dictionary.value,
+      textColor: ui.textColor.value,
+      outline: ui.outline.value,
+      band: ui.band.checked,
+      saveFormats: [...elements.saveFormat].filter((box) => box.checked).map((box) => box.value),
+    });
+    prepareTranslation();
   }
 
   async function describeBuiltin() {
@@ -651,41 +795,95 @@
     }
   }
 
-  function setGasResult(message, state = '') {
-    ui.gasResult.textContent = message;
-    ui.gasResult.dataset.state = state;
+  function setResult(el, message, state = '') {
+    el.textContent = message;
+    el.dataset.state = state;
   }
+
+  const setGasResult = (message, state) => setResult(ui.gasResult, message, state);
 
   // ---------------------------------------------------------------------------
   // 保存
   // ---------------------------------------------------------------------------
 
+  const FILE_BUILDERS = {
+    txt: { build: buildTxt, type: 'text/plain' },
+    srt: { build: buildSrt, type: 'application/x-subrip' },
+    vtt: { build: buildVtt, type: 'text/vtt' },
+  };
+
   function saveTranscript() {
     if (!transcript.length) return;
-    const indent = ' '.repeat(11); // "[hh:mm:ss] " の幅
-    const body = transcript
-      .map((entry) => {
-        const line = `[${formatTime(entry.time)}] ${entry.text}`;
-        return entry.translation ? `${line}\n${indent}${entry.translation}` : line;
-      })
-      .join('\n');
-
-    const blob = new Blob([body + '\n'], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `subtitles_${formatStamp(transcript[0].time)}.txt`;
-    document.body.append(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 0);
-
+    const basename = `subtitles_${formatStamp(transcriptOrigin ?? transcript[0].start)}`;
+    for (const format of settings.saveFormats) {
+      const { build, type } = FILE_BUILDERS[format];
+      downloadFile(build(), `${basename}.${format}`, `${type};charset=utf-8`);
+    }
     unsaved = false;
     updateControls();
   }
 
+  function downloadFile(content, filename, type) {
+    const url = URL.createObjectURL(new Blob([content], { type }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.append(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
+  function buildTxt() {
+    const indent = ' '.repeat(11); // "[hh:mm:ss] " の幅
+    return transcript
+      .map((entry) => {
+        const line = `[${formatTime(entry.start)}] ${entry.text}`;
+        return entry.translation ? `${line}\n${indent}${entry.translation}` : line;
+      })
+      .join('\n') + '\n';
+  }
+
+  function buildSrt() {
+    return buildCues()
+      .map((cue, i) => `${i + 1}\n${formatCueTime(cue.start, ',')} --> ${formatCueTime(cue.end, ',')}\n${cue.text}`)
+      .join('\n\n') + '\n';
+  }
+
+  function buildVtt() {
+    const escapeVtt = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const cues = buildCues()
+      .map((cue) => `${formatCueTime(cue.start, '.')} --> ${formatCueTime(cue.end, '.')}\n${escapeVtt(cue.text)}`)
+      .join('\n\n');
+    return `WEBVTT\n\n${cues}\n`;
+  }
+
+  /** 字幕ファイル用に、各発言の表示区間（transcriptOrigin からのミリ秒）と本文を求める */
+  function buildCues() {
+    const origin = transcriptOrigin ?? transcript[0].start;
+    return transcript.map((entry, i) => {
+      const next = transcript[i + 1];
+      const start = Math.max(0, entry.start - origin);
+      // 確定後も少し表示を残すが、次の発言とは重ねない
+      let end = entry.end - origin + CUE_LINGER;
+      if (next) end = Math.min(end, next.start - origin);
+      end = Math.max(end, start + CUE_MIN_DURATION);
+      return { start, end, text: cueText(entry) };
+    });
+  }
+
+  /** 画面の表示に合わせる: 翻訳があれば翻訳（原文も表示する設定なら原文の下に） */
+  function cueText(entry) {
+    const oneLine = (s) => s.replace(/\s*\n\s*/g, ' ');
+    if (!entry.translation) return oneLine(entry.text);
+    const translation = oneLine(entry.translation);
+    return settings.showOriginal ? `${oneLine(entry.text)}\n${translation}` : translation;
+  }
+
   function resetTranscript() {
     transcript = [];
+    // 認識中にリセットした場合は、次のファイルの 0 秒をその時点にする
+    transcriptOrigin = listening ? new Date() : null;
     unsaved = false;
     updateControls();
   }
@@ -694,6 +892,15 @@
 
   function formatTime(d) {
     return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  /** ミリ秒 → "hh:mm:ss,mmm"（SRT）/ "hh:mm:ss.mmm"（VTT） */
+  function formatCueTime(ms, separator) {
+    const total = Math.round(ms);
+    const h = Math.floor(total / 3600000);
+    const m = Math.floor(total / 60000) % 60;
+    const s = Math.floor(total / 1000) % 60;
+    return `${pad(h)}:${pad(m)}:${pad(s)}${separator}${String(total % 1000).padStart(3, '0')}`;
   }
 
   function formatStamp(d) {
