@@ -89,6 +89,8 @@ assets/css/subtitles.css 字幕ページのスタイル
 assets/js/config.js     対応言語・UI 文言
 assets/js/subtitles.js  音声認識・翻訳・表示・保存の処理
 gas/Code.gs             利用者が自分で公開する翻訳用 GAS
+favicon.svg / favicon.ico / apple-touch-icon.png  アイコン
+LICENSE                 MIT License
 ```
 
 ビルド不要の静的サイトです。ローカルで試す場合は任意の静的サーバーで `localhost` から開いてください。
@@ -111,3 +113,7 @@ gas/Code.gs             利用者が自分で公開する翻訳用 GAS
 4. 発行された `https://script.google.com/macros/s/…/exec` を字幕ページの ⚙ に貼り付け、「テスト」で確認して「保存」
 
 GAS は `GET ?text=...&source=...&target=...` に対して翻訳結果をプレーンテキストで返します。同じ形式で応答するものなら GAS 以外のエンドポイントも登録できます。
+
+## ライセンス
+
+[MIT License](LICENSE)
