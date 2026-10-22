@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Speech Recognition Subtitles</title>
-  <meta name="description" content="話した言葉をリアルタイムで大きな字幕にするブラウザツール。翻訳表示・テキスト保存・配信用の透過背景に対応。">
+  <meta name="description" content="話した言葉をリアルタイムで大きな字幕にするブラウザツール。翻訳表示・字幕ファイルの保存・グリーンバックによる配信画面への重ね合わせに対応。">
   <link rel="icon" href="favicon.ico">
   <link rel="stylesheet" href="assets/css/home.css">
 </head>
@@ -63,14 +63,14 @@
         <li><b>テロップ表示</b> — 画面下部に最新の 1〜3 行だけを表示。文字色・縁取り・背景の帯も設定できます。</li>
         <li><b>字幕ファイルで保存</b> — テキストのほか、動画編集や YouTube で使える SRT / VTT 形式で保存できます。</li>
         <li><b>無音で自動消去</b> — 最後に字幕が確定してから一定時間たつと画面をリセット。消去時に自動保存もできます。</li>
-        <li><b>配信向けの背景</b> — ダーク・黒・グリーンバック・透明から選べ、OBS などに重ねられます。</li>
+        <li><b>配信画面に重ねる</b> — 背景をグリーンバックにして、OBS などのクロマキーで抜けば、字幕だけを配信画面に重ねられます（<a href="#streaming">手順</a>）。</li>
         <li><b>設定の記憶</b> — 選んだ設定はブラウザに保存され、次回も引き継がれます。</li>
       </ul>
     </section>
 
     <section>
       <h2>URL パラメータ</h2>
-      <p>URL に設定を書いておくと、開いた瞬間からその設定で表示されます。OBS のブラウザソースに登録するときに便利です。</p>
+      <p>URL に設定を書いておくと、開いた瞬間からその設定で表示されます。よく使う設定をブックマークしておくと便利です。</p>
       <div class="table-wrap">
         <table>
           <thead>
@@ -93,8 +93,26 @@
           </tbody>
         </table>
       </div>
-      <p class="example">例: <code>subtitles.html?source=ja&amp;target=en&amp;bg=transparent&amp;layout=telop2&amp;outline=thick</code></p>
+      <p class="example">例: <code>subtitles.html?source=ja&amp;target=en&amp;bg=green&amp;layout=telop2&amp;outline=thick</code></p>
       <p>置換辞書と GAS の URL は URL パラメータでは指定できません。字幕ページの ⚙ から設定してください。</p>
+    </section>
+
+    <section id="streaming">
+      <h2>配信画面に字幕を重ねる（OBS）</h2>
+      <p>音声認識は Chrome / Edge で動かし、そのウィンドウを OBS で取り込んで、グリーンバックをクロマキーで抜きます。</p>
+      <ol class="steps">
+        <li>Chrome で字幕ページを開きます（例: <a href="subtitles.html?bg=green&amp;layout=telop2&amp;outline=thick"><code>subtitles.html?bg=green&amp;layout=telop2&amp;outline=thick</code></a>）。</li>
+        <li><b>開始</b> を押して音声認識を始めます。</li>
+        <li>OBS で「ソースを追加」→「ウィンドウキャプチャ」を選び、字幕ページの Chrome ウィンドウを取り込みます。</li>
+        <li>取り込んだソースを右クリック →「フィルタ」→「クロマキー」を追加し、色を「緑」にします。</li>
+        <li>字幕の位置と大きさを配信画面に合わせて調整します。</li>
+      </ol>
+      <ul class="features">
+        <li>字幕ページは専用のウィンドウで開くと扱いやすくなります（ほかのタブに切り替えると、取り込む映像も切り替わるため）。</li>
+        <li>縁取りを付けておくと、どんな映像の上でも読みやすくなります。初期設定の「自動」では、グリーンバックのときに縁取りが付きます。</li>
+        <li>文字色に緑系を選ぶと、クロマキーで文字まで抜けてしまうので避けてください。</li>
+      </ul>
+      <p>背景の「透明」は、ページそのものを透過で描画できる環境（OBS のブラウザソースなど）向けの設定です。ただし、OBS のブラウザソースの中では音声認識が動かない可能性が高いため、通常はグリーンバックを使ってください。Chrome のウィンドウを取り込む場合、背景を透明にしても透けません。</p>
     </section>
 
     <section id="gas">
