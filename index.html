@@ -90,6 +90,7 @@
             <tr><td><code>color</code></td><td>文字色（<code>#</code> は省略可）</td><td><code>ffffff</code>, <code>ffeb3b</code></td></tr>
             <tr><td><code>outline</code></td><td>縁取り</td><td><code>auto</code>, <code>none</code>, <code>thin</code>, <code>thick</code></td></tr>
             <tr><td><code>band</code></td><td>テロップの背景帯</td><td><code>1</code> / <code>0</code></td></tr>
+            <tr><td><code>notice</code></td><td>一時的なエラー（ネットワーク・翻訳の失敗）を画面に表示する（<code>0</code> で操作パネルの状態表示にだけ出す）</td><td><code>1</code> / <code>0</code></td></tr>
             <tr><td><code>format</code></td><td>保存形式（カンマ区切り）</td><td><code>txt</code>, <code>srt</code>, <code>vtt</code></td></tr>
             <tr><td><code>ui</code></td><td>表示言語</td><td><code>ja</code> / <code>en</code></td></tr>
           </tbody>
@@ -103,7 +104,7 @@
       <h2>配信画面に字幕を重ねる（OBS）</h2>
       <p>音声認識は Chrome / Edge で動かし、そのウィンドウを OBS で取り込んで、グリーンバックをクロマキーで抜きます。</p>
       <ol class="steps">
-        <li>Chrome で字幕ページを開きます（例: <a href="subtitles.html?bg=green&amp;layout=telop2&amp;outline=thick"><code>subtitles.html?bg=green&amp;layout=telop2&amp;outline=thick</code></a>）。</li>
+        <li>Chrome で字幕ページを開きます（例: <a href="subtitles.html?bg=green&amp;layout=telop2&amp;outline=thick&amp;notice=0"><code>subtitles.html?bg=green&amp;layout=telop2&amp;outline=thick&amp;notice=0</code></a>）。</li>
         <li><b>開始</b> を押して音声認識を始めます。</li>
         <li>OBS で「ソースを追加」→「ウィンドウキャプチャ」を選び、字幕ページの Chrome ウィンドウを取り込みます。</li>
         <li>取り込んだソースを右クリック →「フィルタ」→「クロマキー」を追加し、色を「緑」にします。</li>
@@ -113,6 +114,7 @@
         <li>字幕ページは専用のウィンドウで開くと扱いやすくなります（ほかのタブに切り替えると、取り込む映像も切り替わるため）。</li>
         <li>縁取りを付けておくと、どんな映像の上でも読みやすくなります。初期設定の「自動」では、グリーンバックのときに縁取りが付きます。</li>
         <li>文字色に緑系を選ぶと、クロマキーで文字まで抜けてしまうので避けてください。</li>
+        <li>⚙ の「一時的なエラーを画面に表示しない」をオンにする（URL では <code>notice=0</code>）と、ネットワークエラーや翻訳の失敗が配信に映りません。これらは操作パネルの状態表示に黄色で出ます。マイクの問題など、音声認識が止まるエラーは常に表示します。</li>
       </ul>
       <p>背景の「透明」は、ページそのものを透過で描画できる環境（OBS のブラウザソースなど）向けの設定です。ただし、OBS のブラウザソースの中では音声認識が動かない可能性が高いため、通常はグリーンバックを使ってください。Chrome のウィンドウを取り込む場合、背景を透明にしても透けません。</p>
     </section>

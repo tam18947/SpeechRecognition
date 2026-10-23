@@ -33,6 +33,7 @@
     textColor: '#f5f6f8',
     outline: 'auto',
     band: true,
+    showTransientNotices: true, // false: 一時的なエラーは操作パネルの状態表示にだけ出す
     saveFormats: ['txt'],
     dictionary: '',
     engine: 'builtin', // 優先する翻訳: 'builtin' | 'gas'
@@ -53,6 +54,7 @@
     color: 'textColor',
     outline: 'outline',
     band: 'band',
+    notice: 'showTransientNotices',
     format: 'saveFormats',
   };
 
@@ -62,6 +64,7 @@
     clear: $('clear'),
     download: $('download'),
     statusText: $('statusText'),
+    statusNote: $('statusNote'),
     source: $('source'),
     target: $('target'),
     translateStatus: $('translateStatus'),
@@ -88,6 +91,7 @@
     textColor: $('textColor'),
     outline: $('outline'),
     band: $('band'),
+    hideTransient: $('hideTransient'),
     cancelSettings: $('cancelSettings'),
   };
 
@@ -105,6 +109,8 @@
   let utteranceStartedAt = null; // 認識中の発言の最初の結果が届いた時刻
   let silenceTimer = 0;
   let noticeTimer = 0;
+  /** 一時的なエラーの種類 → 操作パネルの状態表示に出す文 */
+  const statusNotes = new Map();
   let wakeLock = null;
 
   /** 言語ペア → ブラウザ内蔵翻訳の利用可否 / Translator インスタンス（いずれも Promise） */
@@ -156,6 +162,7 @@
       textColor: sanitizeColor(s.textColor) || DEFAULTS.textColor,
       outline: s.outline in OUTLINES ? s.outline : DEFAULTS.outline,
       band: toBoolean(s.band, DEFAULTS.band),
+      showTransientNotices: toBoolean(s.showTransientNotices, DEFAULTS.showTransientNotices),
       saveFormats: sanitizeFormats(s.saveFormats),
       dictionary: String(s.dictionary ?? '').slice(0, DICTIONARY_MAX_LENGTH),
       engine: s.engine === 'gas' ? 'gas' : 'builtin',
@@ -352,6 +359,7 @@
     clearTimeout(silenceTimer);
     recognition?.stop();
     releaseWakeLock();
+    statusNotes.clear();
     updateControls();
   }
 
@@ -367,6 +375,9 @@
   }
 
   function handleResult(event) {
+    // 結果が届いた = 音声認識は回復している
+    clearStatusNote('network');
+    clearStatusNote('recognition');
     const now = new Date();
     utteranceStartedAt ??= now;
     let interim = '';
@@ -397,7 +408,7 @@
       case 'aborted':
         return; // onend で自動的に再開する
       case 'network':
-        notify(t('errorNetwork'));
+        reportTransient('network', t('noteNetwork'), t('errorNetwork'));
         return;
       case 'not-allowed':
       case 'service-not-allowed':
@@ -413,7 +424,8 @@
         notify(t('errorLanguage'), 0);
         return;
       default:
-        notify(t('errorUnknown') + event.error);
+        // 認識は onend で再開するため、一時的なエラーとして扱う
+        reportTransient('recognition', t('noteUnknown') + event.error, t('errorUnknown') + event.error);
     }
   }
 
@@ -490,17 +502,18 @@
   async function translateEntry(entry) {
     try {
       setEntryState(entry, 'done', await translateText(entry.text, entry.source, entry.target));
+      clearStatusNote('translate');
     } catch (err) {
       if (err instanceof TranslationUnavailableError) {
         setEntryState(entry, 'plain');
-        // 発話のたびに同じ通知が出ないよう、言語ペアごとに 1 回だけ知らせる
+        // 発話のたびに同じ通知が出ないよう、画面への通知は言語ペアごとに 1 回だけにする
         const key = pairKey(entry.source, entry.target);
-        if (lastUnavailableNotice !== key) notify(t('translateUnavailable'));
+        reportTransient('translate', t('noteTranslateUnavailable'), lastUnavailableNotice !== key ? t('translateUnavailable') : '');
         lastUnavailableNotice = key;
       } else {
         console.error('Translation failed:', err);
         setEntryState(entry, 'error');
-        notify(t('translateFailed'));
+        reportTransient('translate', t('noteTranslateFailed'), t('translateFailed'));
       }
     }
     scrollToBottom();
@@ -633,6 +646,8 @@
   /** 翻訳モデルのダウンロードにはユーザー操作が必要なため、操作のハンドラーから呼ぶ */
   async function prepareTranslation() {
     const { source, target } = settings;
+    // 言語や翻訳の設定が変わったら、前の翻訳エラーは関係なくなる
+    clearStatusNote('translate');
     refreshTranslateStatus();
     if (target === 'none' || target === source) return;
     // GAS を優先して使える状態なら、内蔵翻訳のモデルは取得しない
@@ -729,6 +744,7 @@
     ui.textColor.value = settings.textColor;
     ui.outline.value = settings.outline;
     ui.band.checked = settings.band;
+    ui.hideTransient.checked = !settings.showTransientNotices;
     for (const box of elements.saveFormat) box.checked = settings.saveFormats.includes(box.value);
     setGasResult('');
     setResult(ui.dictionaryResult, '');
@@ -761,6 +777,7 @@
       textColor: ui.textColor.value,
       outline: ui.outline.value,
       band: ui.band.checked,
+      showTransientNotices: !ui.hideTransient.checked,
       saveFormats: [...elements.saveFormat].filter((box) => box.checked).map((box) => box.value),
     });
     prepareTranslation();
@@ -917,8 +934,24 @@
     ui.toggle.textContent = t(listening ? 'stop' : 'start');
     ui.toggle.setAttribute('aria-pressed', listening);
     ui.statusText.textContent = t(listening ? 'statusListening' : 'statusIdle');
+    ui.statusNote.textContent = [...statusNotes.values()].join(' / ');
+    document.body.classList.toggle('has-warning', statusNotes.size > 0);
     ui.download.disabled = transcript.length === 0;
     ui.clear.disabled = transcript.length === 0 && ui.lines.childElementCount === 0;
+  }
+
+  /**
+   * 自動で回復する（または原文で続けられる）エラー。
+   * 操作パネルの状態表示には常に出し、画面への通知は設定でオフにできる。
+   */
+  function reportTransient(key, note, message) {
+    statusNotes.set(key, note);
+    updateControls();
+    if (settings.showTransientNotices && message) notify(message);
+  }
+
+  function clearStatusNote(key) {
+    if (statusNotes.delete(key)) updateControls();
   }
 
   /** duration = 0 のときは自動で閉じない */

@@ -8,6 +8,7 @@
   --accent: #3b82f6;
   --danger: #ef4444;
   --live: #22c55e;
+  --warning: #facc15;
   color-scheme: dark;
 }
 
@@ -197,6 +198,19 @@ input[type="range"] {
   animation: pulse 1.6s ease-in-out infinite;
 }
 
+/* 一時的なエラーが出ている間は、状態表示を黄色にする */
+.has-warning .status__dot {
+  background: var(--warning);
+}
+
+.status__note {
+  color: var(--warning);
+}
+
+.status__note:empty {
+  display: none;
+}
+
 @keyframes pulse {
   50% { opacity: 0.35; }
 }
@@ -310,6 +324,10 @@ input[type="range"] {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.dialog__check {
+  margin-top: 8px;
 }
 
 .dialog__inline input[type="url"] {

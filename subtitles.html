@@ -23,6 +23,7 @@
       <span class="status" id="status" role="status">
         <span class="status__dot" aria-hidden="true"></span>
         <span id="statusText" data-i18n="statusIdle">停止中</span>
+        <span class="status__note" id="statusNote"></span>
       </span>
     </div>
 
@@ -127,6 +128,11 @@
           <input type="checkbox" id="band">
           <span data-i18n="band">テロップに背景の帯を付ける</span>
         </label>
+        <label class="dialog__inline dialog__check">
+          <input type="checkbox" id="hideTransient">
+          <span data-i18n="hideTransient">一時的なエラーを画面に表示しない</span>
+        </label>
+        <p class="dialog__help" data-i18n="hideTransientHelp"></p>
       </section>
 
       <section class="dialog__section">
