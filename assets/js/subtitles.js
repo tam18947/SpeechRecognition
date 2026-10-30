@@ -77,6 +77,7 @@
     background: $('background'),
     layout: $('layout'),
     screen: $('screen'),
+    screenContent: $('screenContent'),
     lines: $('lines'),
     interim: $('interim'),
     notice: $('notice'),
@@ -296,8 +297,14 @@
       updateSettings({ target: ui.target.value });
       prepareTranslation();
     });
-    ui.showOriginal.addEventListener('change', () => updateSettings({ showOriginal: ui.showOriginal.checked }));
-    ui.size.addEventListener('input', () => updateSettings({ size: ui.size.value }));
+    ui.showOriginal.addEventListener('change', () => {
+      updateSettings({ showOriginal: ui.showOriginal.checked });
+      releaseHeight();
+    });
+    ui.size.addEventListener('input', () => {
+      updateSettings({ size: ui.size.value });
+      releaseHeight();
+    });
     ui.autoClear.addEventListener('change', () => {
       updateSettings({ autoClear: ui.autoClear.value });
       resetSilenceTimer();
@@ -306,6 +313,7 @@
     ui.background.addEventListener('change', () => updateSettings({ background: ui.background.value }));
     ui.layout.addEventListener('change', () => {
       updateSettings({ layout: ui.layout.value });
+      releaseHeight();
       scrollToBottom();
     });
 
@@ -315,6 +323,9 @@
     ui.gasTest.addEventListener('click', testGas);
     ui.dictionary.addEventListener('input', () => setResult(ui.dictionaryResult, ''));
     ui.dialogForm.addEventListener('submit', saveSettingsDialog);
+
+    // 折り返し位置が変わるので、保持していた高さはいったん手放す
+    window.addEventListener('resize', releaseHeight);
 
     document.addEventListener('visibilitychange', () => {
       if (listening && document.visibilityState === 'visible') requestWakeLock();
@@ -388,6 +399,9 @@
         const text = applyDictionary(result[0].transcript.trim());
         if (text) {
           addEntry(text, utteranceStartedAt ?? now, now);
+          // 認識途中の文字は確定した字幕に置き換わっただけなので、
+          // その分の高さは保持せずに消す（保持すると下に余分な空白が残る）
+          setInterim('', false);
           confirmed = true;
         }
         utteranceStartedAt = null;
@@ -482,8 +496,9 @@
     entry.el = el;
     setEntryState(entry, needsTranslation ? 'pending' : 'plain');
 
+    holdHeight();
     ui.lines.append(el);
-    while (ui.lines.childElementCount > MAX_VISIBLE_ENTRIES) ui.lines.firstElementChild.remove();
+    while (ui.lines.childElementCount > MAX_VISIBLE_ENTRIES) removeOldestEntry();
     transcriptOrigin ??= start;
     transcript.push(entry);
     unsaved = true;
@@ -494,6 +509,7 @@
   }
 
   function setEntryState(entry, state, translation = '') {
+    if (entry.el.isConnected) holdHeight();
     entry.translation = translation;
     entry.el.dataset.state = state;
     entry.el.lastElementChild.textContent = translation;
@@ -519,8 +535,9 @@
     scrollToBottom();
   }
 
-  function setInterim(text) {
+  function setInterim(text, hold = true) {
     if (ui.interim.textContent === text) return;
+    if (hold) holdHeight();
     ui.interim.lang = settings.source;
     ui.interim.textContent = text;
     scrollToBottom();
@@ -532,7 +549,33 @@
     });
   }
 
+  // 「全体」表示では最下部までスクロールしているため、訳文が原文より短くなるなどして
+  // 中身の高さが減ると、スクロール位置が詰められて文字が下へずれてしまう。
+  // そこで書き換えの直前の高さを最小の高さとして保持し、表示が下へ戻らないようにする。
+  // （減った分は下側の余白になり、次の字幕で埋まっていく）
+  function holdHeight() {
+    if (settings.layout !== 'scroll') return;
+    ui.screenContent.style.minHeight = `${ui.screenContent.offsetHeight}px`;
+  }
+
+  function releaseHeight() {
+    ui.screenContent.style.minHeight = '';
+  }
+
+  // 古い字幕を上から消すときは、消した分だけ保持している高さも減らす
+  // （そうしないと下側の余白がたまり続ける）
+  function removeOldestEntry() {
+    const first = ui.lines.firstElementChild;
+    const removed = first.nextElementSibling
+      ? first.nextElementSibling.offsetTop - first.offsetTop
+      : first.offsetHeight;
+    first.remove();
+    const held = parseFloat(ui.screenContent.style.minHeight);
+    if (held) ui.screenContent.style.minHeight = `${Math.max(0, held - removed)}px`;
+  }
+
   function clearScreen() {
+    releaseHeight();
     ui.lines.replaceChildren();
     // 確定しないまま残った認識途中の文字も消す
     ui.interim.textContent = '';

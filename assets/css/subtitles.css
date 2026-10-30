@@ -424,6 +424,11 @@ input[type="range"] {
   display: none;
 }
 
+/* 字幕の余白（margin）が外にはみ出さないようにし、高さの保持を正確にする */
+.screen__content {
+  display: flow-root;
+}
+
 .entry {
   margin-bottom: 0.3em;
 }
